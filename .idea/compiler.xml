@@ -8,15 +8,16 @@
         <outputRelativeToContentRoot value="true" />
         <module name="eureka-service" />
         <module name="vehiculo-service" />
-        <module name="reparacionvehiculo-service" />
         <module name="reportes-service" />
         <module name="config-server" />
         <module name="reparacion-service" />
         <module name="gateway-service" />
+        <module name="repairvehicle-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="eureka-server" target="17" />
+      <module name="reparacionvehiculo-service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -25,6 +26,7 @@
       <module name="eureka-server" options="-parameters" />
       <module name="eureka-service" options="" />
       <module name="gateway-service" options="-parameters" />
+      <module name="repairvehicle-service" options="-parameters" />
       <module name="reparacion-service" options="-parameters" />
       <module name="reparacionvehiculo-service" options="-parameters" />
       <module name="reportes-service" options="-parameters" />
