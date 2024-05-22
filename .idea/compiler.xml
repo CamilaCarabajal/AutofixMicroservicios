@@ -24,7 +24,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="config-server" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
-      <module name="eureka-service" options="" />
+      <module name="eureka-service" options="-parameters" />
       <module name="gateway-service" options="-parameters" />
       <module name="repairvehicle-service" options="-parameters" />
       <module name="reparacion-service" options="-parameters" />
