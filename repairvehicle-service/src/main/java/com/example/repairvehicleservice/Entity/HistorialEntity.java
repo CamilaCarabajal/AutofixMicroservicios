@@ -26,6 +26,7 @@ public class HistorialEntity {
     private String patente;
     private Long id_descuento;
     private Long id_recargo;
+    private Long id_costo;
     private LocalDate fecha_ingreso;
     private LocalTime hora_ingreso;
     private int monto_total;
