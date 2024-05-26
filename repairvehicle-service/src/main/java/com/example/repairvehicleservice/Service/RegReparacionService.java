@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
 public class RegReparacionService {
 
@@ -186,8 +188,35 @@ public class RegReparacionService {
             return null;
         }
     }
+/*----------------------------------------------CRUD----------------------------------------*/
+    public RegReparacionEntity obtenerReparacionPorId(Long id_reparacion) {
+        return regReparacionRepository.findById(id_reparacion).orElse(null);
+}
 
+    public RegReparacionEntity actualizarReparacion(Long id_reparacion, RegReparacionEntity reparacionActualizada) {
+        RegReparacionEntity reparacion = regReparacionRepository.findById(id_reparacion).orElse(null);
+        if (reparacion != null) {
+            reparacion.setPatente(reparacionActualizada.getPatente());
+            reparacion.setTipo_reparacion(reparacionActualizada.getTipo_reparacion());
+            reparacion.setFeche_reparacion(reparacionActualizada.getFeche_reparacion());
+            reparacion.setHora_reparacion(reparacionActualizada.getHora_reparacion());
+            reparacion.setMonto_reparacion(reparacionActualizada.getMonto_reparacion());
+            return regReparacionRepository.save(reparacion);
+        }
+        return null;
+    }
 
+    public void eliminarReparacion(Long id_reparacion) {
+        regReparacionRepository.deleteById(id_reparacion);
+    }
+
+    public List<RegReparacionEntity> listarReparaciones() {
+        return regReparacionRepository.findAll();
+    }
+
+    public List<RegReparacionEntity> listarReparacionesPorPatente(String patente) {
+        return regReparacionRepository.findByPatente(patente);
+    }
 
 
 }
