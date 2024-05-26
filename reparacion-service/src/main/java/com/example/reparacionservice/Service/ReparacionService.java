@@ -126,7 +126,6 @@ public class ReparacionService {
     public ReparacionEntity guardarReparacion(ReparacionEntity reparacion, String motor) {
         ReparacionEntity nuevaReparacion = new ReparacionEntity();
         nuevaReparacion.setId_reparacion(reparacion.getId_reparacion());
-        nuevaReparacion.setPatente(reparacion.getPatente());
         nuevaReparacion.setTipo_reparacion(reparacion.getTipo_reparacion());
         nuevaReparacion.setMonto_reparacion(calculoMontoReparacion(reparacion,motor));
         return reparacionRepository.save(nuevaReparacion);

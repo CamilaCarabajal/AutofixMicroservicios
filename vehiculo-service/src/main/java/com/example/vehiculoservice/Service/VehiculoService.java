@@ -28,6 +28,8 @@ public class VehiculoService {
             vehiculo.setAno_fabricacion(vehiculoActualizado.getAno_fabricacion());
             vehiculo.setMotor(vehiculoActualizado.getMotor());
             vehiculo.setAsientos(vehiculoActualizado.getAsientos());
+            vehiculo.setKilometraje(vehiculoActualizado.getKilometraje());
+            vehiculo.setCantidad_reparaciones(vehiculoActualizado.getCantidad_reparaciones());
             return vehiculoRepository.save(vehiculo);
         }
         return null;

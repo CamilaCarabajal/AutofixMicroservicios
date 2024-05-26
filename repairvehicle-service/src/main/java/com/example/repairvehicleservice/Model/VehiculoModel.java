@@ -1,5 +1,4 @@
-package com.example.vehiculoservice.Entity;
-
+package com.example.repairvehicleservice.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,17 +8,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
 @Entity
 @Table(name = "vehiculo")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VehiculoEntity {
+public class VehiculoModel {
 
     @Id
-    @Column(unique = true, nullable = false)
+    @Column(unique = true,nullable = false)
     private String patente;
     private String marca;
     private String modelo;
@@ -28,5 +25,4 @@ public class VehiculoEntity {
     private int asientos;
     private int kilometraje;
     private int cantidad_reparaciones;
-
 }
