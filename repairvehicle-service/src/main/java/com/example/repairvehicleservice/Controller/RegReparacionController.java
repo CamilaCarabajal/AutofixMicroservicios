@@ -67,14 +67,5 @@ public class RegReparacionController {
         }
     }
 
-    @GetMapping("/vehiculo/{patente}")
-    public ResponseEntity<List<RegReparacionEntity>> listarReparacionesPorPatente(@PathVariable String patente) {
-        List<RegReparacionEntity> reparaciones = regReparacionService.listarReparacionesPorPatente(patente);
 
-        if (!reparaciones.isEmpty()) {
-            return ResponseEntity.ok(reparaciones);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }

@@ -5,7 +5,6 @@ import com.example.repairvehicleservice.Entity.RegReparacionEntity;
 import com.example.repairvehicleservice.Model.VehiculoModel;
 import com.example.repairvehicleservice.Repository.RecargoRepository;
 import com.example.repairvehicleservice.Repository.RegReparacionRepository;
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,6 @@ public class RecargoService {
 
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private EntityManager entityManager;
 
     public VehiculoModel getVehiculo(String patente) {
         ResponseEntity<VehiculoModel> responseEntity = restTemplate.exchange(
@@ -99,7 +96,7 @@ public class RecargoService {
         }
         return recargoAntiguedad;
     }
-    public double calcularRecargoPorRetraso(Long idReparacion, LocalDate fechaListoParaEntregar, LocalDate fechaRecogida) {
+    public double calcularRecargoPorRetraso(Long idReparacion, LocalDate fecha_reparacion, LocalDate fecha_cliente) {
         RegReparacionEntity reparacion = regReparacionRepository.findById(idReparacion).orElse(null);
         if (reparacion == null) {
             // Manejo de error si no se encuentra la reparación
@@ -107,7 +104,7 @@ public class RecargoService {
         }
 
         // Calcula la cantidad de días de retraso
-        long diasRetraso = ChronoUnit.DAYS.between(fechaListoParaEntregar, fechaRecogida);
+        long diasRetraso = ChronoUnit.DAYS.between(fecha_reparacion, fecha_cliente);
 
         if (diasRetraso > 0) {
             // Calcula el recargo por retraso (5% por cada día de retraso)

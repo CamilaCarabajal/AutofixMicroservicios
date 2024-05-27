@@ -198,7 +198,7 @@ public class RegReparacionService {
         if (reparacion != null) {
             reparacion.setPatente(reparacionActualizada.getPatente());
             reparacion.setTipo_reparacion(reparacionActualizada.getTipo_reparacion());
-            reparacion.setFeche_reparacion(reparacionActualizada.getFeche_reparacion());
+            reparacion.setFecha_reparacion(reparacionActualizada.getFecha_reparacion());
             reparacion.setHora_reparacion(reparacionActualizada.getHora_reparacion());
             reparacion.setMonto_reparacion(reparacionActualizada.getMonto_reparacion());
             return regReparacionRepository.save(reparacion);
@@ -214,9 +214,6 @@ public class RegReparacionService {
         return regReparacionRepository.findAll();
     }
 
-    public List<RegReparacionEntity> listarReparacionesPorPatente(String patente) {
-        return regReparacionRepository.findByPatente(patente);
-    }
 
 
 }

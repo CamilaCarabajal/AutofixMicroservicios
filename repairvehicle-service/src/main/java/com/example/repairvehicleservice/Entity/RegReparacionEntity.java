@@ -21,7 +21,7 @@ public class RegReparacionEntity {
     private Long id_regrepair;
     private String patente;
     private int tipo_reparacion;
-    private LocalDate feche_reparacion;
+    private LocalDate fecha_reparacion;
     private LocalTime hora_reparacion;
     private int monto_reparacion;
 }

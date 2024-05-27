@@ -92,8 +92,6 @@ public class DescuentoService {
             }
         }
         return descuentoReparacion;
-
-
     }
 
     public double calcularDescuentoBono(String patente){
@@ -121,12 +119,12 @@ public class DescuentoService {
         return descuentoBono;
     }
 
-    public void aplicarDescuentoPorDiaDeAtencion(Long id_reparacion) {
+    public double calculoDescuentoDia(Long id_reparacion) {
         // Obtener la reparación por su id
         RegReparacionEntity reparacion = entityManager.find(RegReparacionEntity.class, id_reparacion);
 
         if (reparacion != null) {
-            if (reparacion.getFeche_reparacion().getDayOfWeek().equals(DayOfWeek.MONDAY) || reparacion.getFeche_reparacion().getDayOfWeek().equals(DayOfWeek.THURSDAY)) {
+            if (reparacion.getFecha_reparacion().getDayOfWeek().equals(DayOfWeek.MONDAY) || reparacion.getFecha_reparacion().getDayOfWeek().equals(DayOfWeek.THURSDAY)) {
                 LocalTime horaReparacion = reparacion.getHora_reparacion();
                 if (horaReparacion.isAfter(LocalTime.of(9, 0)) && horaReparacion.isBefore(LocalTime.of(12, 0))) {
                     // Calcular el monto con el descuento del 10%
@@ -140,9 +138,13 @@ public class DescuentoService {
 
                     // Guardar el registro en la base de datos
                     entityManager.persist(descuento);
+
+                    return reparacion.getMonto_reparacion() - montoConDescuento; // Retornar el monto del descuento realizado
                 }
             }
         }
+
+        return 0; // Retornar 0 si no se realizó ningún descuento
     }
 
 
