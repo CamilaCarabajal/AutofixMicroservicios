@@ -1,12 +1,11 @@
 package com.example.repairvehicleservice.Controller;
 
+import com.example.repairvehicleservice.Entity.HistorialEntity;
 import com.example.repairvehicleservice.Entity.RegReparacionEntity;
 import com.example.repairvehicleservice.Service.HistorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +20,22 @@ public class HistorialController {
 
         if (!reparaciones.isEmpty()) {
             return ResponseEntity.ok(reparaciones);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PostMapping
+    public ResponseEntity<HistorialEntity> guardarHistorial(@RequestBody String patente) {
+        HistorialEntity nuevoHistorial = historialService.guardarHistorial(patente);
+        return ResponseEntity.ok(nuevoHistorial);
+    }
+
+    @GetMapping("/listaHistorial")
+    public ResponseEntity<List<HistorialEntity>> listaHistorial() {
+        List<HistorialEntity> historial = historialService.listaHistorial();
+
+        if (!historial.isEmpty()) {
+            return ResponseEntity.ok(historial);
         } else {
             return ResponseEntity.notFound().build();
         }

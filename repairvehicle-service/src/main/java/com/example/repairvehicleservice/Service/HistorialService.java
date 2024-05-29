@@ -134,7 +134,6 @@ public class HistorialService {
         return costoTotal;
     }
 
-    //CORREGIR ERRORES
     public HistorialEntity guardarHistorial(String patente) {
         VehiculoModel vehiculo = getVehiculo(patente);
         RegReparacionEntity regReparacion = new RegReparacionEntity();
