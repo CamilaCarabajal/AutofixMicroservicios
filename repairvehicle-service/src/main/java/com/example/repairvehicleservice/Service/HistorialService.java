@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -27,6 +26,8 @@ public class HistorialService {
     DescuentoRepository descuentoRepository;
     @Autowired
     RegReparacionRepository regReparacionRepository;
+    @Autowired
+    RegReparacionService reparacionService;
     @Autowired
     RecargoService recargoService;
     @Autowired
@@ -49,16 +50,20 @@ public class HistorialService {
         return reparaciones;
     }
 
-    public double calcularMontoTotalReparaciones(List<RegReparacionEntity> reparaciones) {
-        double montoTotal = reparaciones.stream()
-                .mapToDouble(RegReparacionEntity::getMonto_reparacion)
-                .sum();
+    public int calcularMontoTotalReparaciones(String patente) {
+        List<RegReparacionEntity> reparaciones = listarReparacionesPorPatente(patente);
+        int montoTotal = 0;
+
+        for (RegReparacionEntity reparacion : reparaciones) {
+            montoTotal += reparacionService.calcularCostoReparacion(patente,reparacion);
+        }
+
         return montoTotal;
     }
     public double calcularMontoRecargos(String patente, LocalDate fechaReparacion, LocalDate fechaCliente) {
         List<RegReparacionEntity> reparaciones = listarReparacionesPorPatente(patente);
 
-        double montoTotal = calcularMontoTotalReparaciones(reparaciones);
+        double montoTotal = calcularMontoTotalReparaciones(patente);
 
         double recargoPorRetraso = 0.0;
         double recargoPorKilometraje = recargoService.calcularRecargoKilometraje(patente);
@@ -78,7 +83,7 @@ public class HistorialService {
         List<RegReparacionEntity> reparaciones = listarReparacionesPorPatente(patente);
 
         // Calcular el monto total de reparaciones
-        double montoTotalReparaciones = calcularMontoTotalReparaciones(reparaciones);
+        double montoTotalReparaciones = calcularMontoTotalReparaciones(patente);
 
         // Calcular el monto total de descuento sumando los descuentos de reparación, bono y por día de atención para cada reparación
         double montoTotalDescuento = 0.0;
@@ -98,8 +103,7 @@ public class HistorialService {
     }
 
     public double calcularMontoSubTotal(String patente, LocalDate fechaReparacion, LocalDate fechaCliente) {
-        List<RegReparacionEntity> reparaciones = listarReparacionesPorPatente(patente);
-        double sumaReparaciones = calcularMontoTotalReparaciones(reparaciones);
+        double sumaReparaciones = calcularMontoTotalReparaciones(patente);
         double montoRecargos = calcularMontoRecargos(patente, fechaReparacion, fechaCliente);
         double montoDescuentos = calcularMontoTotalDescuento(patente);
 
@@ -130,21 +134,29 @@ public class HistorialService {
         return costoTotal;
     }
 
-    public HistorialEntity guardarHistorial(HistorialEntity historial) {
+    //CORREGIR ERRORES
+    public HistorialEntity guardarHistorial(String patente) {
+        VehiculoModel vehiculo = getVehiculo(patente);
+        RegReparacionEntity regReparacion = new RegReparacionEntity();
+        HistorialEntity historial = new HistorialEntity();
         HistorialEntity nuevoHistorial = new HistorialEntity();
         nuevoHistorial.setId_historial(historial.getId_historial());
-        nuevoHistorial.setId_reparacion(historial.getId_reparacion());
-        nuevoHistorial.setPatente(historial.getPatente());
-        nuevoHistorial.setId_descuento(historial.getId_descuento());
-        nuevoHistorial.setId_recargo(historial.getId_recargo());
-        nuevoHistorial.setFecha_ingreso(LocalDate.now());
-        nuevoHistorial.setHora_ingreso(LocalTime.now());
-        nuevoHistorial.setMonto_total(historial.getMonto_total());
-        nuevoHistorial.setMonto_recargo(historial.getMonto_recargo());
-        nuevoHistorial.setMonto_descuento(historial.getMonto_descuento());
-        nuevoHistorial.setMonto_iva(calcularMontoIVA()); // Si necesitas calcular el IVA
-        nuevoHistorial.setCosto_total(calcularCostoTotal(historial.getPatente(), historial.getFecha_salida(),historial.getFecha_cliente())); // Podrías implementar un método para calcular el costo total
-
+        nuevoHistorial.setPatente(patente);
+        nuevoHistorial.setMarca(vehiculo.getMarca());
+        nuevoHistorial.setModelo(vehiculo.getModelo());
+        nuevoHistorial.setAno_fabricacion(vehiculo.getAno_fabricacion());
+        nuevoHistorial.setMotor(vehiculo.getMotor());
+        nuevoHistorial.setFecha_ingreso(historial.getFecha_ingreso());
+        nuevoHistorial.setHora_ingreso(historial.getHora_ingreso());
+        nuevoHistorial.setMonto_total(calcularMontoTotalReparaciones(patente));
+        nuevoHistorial.setMonto_recargo(calcularMontoRecargos(patente, historial.getFecha_salida(), historial.getFecha_cliente()));
+        nuevoHistorial.setMonto_descuento(calcularMontoTotalDescuento(patente));
+        nuevoHistorial.setMonto_iva(calcularMontoIVA(patente, historial.getFecha_salida(), historial.getFecha_cliente()));
+        nuevoHistorial.setCosto_total(calcularCostoTotal(patente, historial.getFecha_salida(), historial.getFecha_cliente()));
+        nuevoHistorial.setFecha_salida(historial.getFecha_salida());
+        nuevoHistorial.setHora_salida(historial.getHora_salida());
+        nuevoHistorial.setFecha_cliente(historial.getFecha_cliente());
+        nuevoHistorial.setHora_cliente(historial.getHora_cliente());
         // Guardar el historial en la base de datos
         return historialRepository.save(nuevoHistorial);
     }
