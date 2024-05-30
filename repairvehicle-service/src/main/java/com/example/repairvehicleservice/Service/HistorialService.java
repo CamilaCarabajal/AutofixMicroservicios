@@ -45,8 +45,9 @@ public class HistorialService {
         return responseEntity.getBody();
     }
 
+
     public List<RegReparacionEntity> listarReparacionesPorPatente(String patente) {
-        List<RegReparacionEntity> reparaciones = regReparacionRepository.findByPatente(patente);
+        List<RegReparacionEntity> reparaciones = regReparacionRepository.findListByPatente(patente);
         return reparaciones;
     }
 

@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface RegReparacionRepository extends JpaRepository<RegReparacionEntity,Long> {
+
     @Query("SELECT r FROM RegReparacionEntity r WHERE r.patente = :patente")
-    List<RegReparacionEntity> findByPatente(@Param("patente") String patente);
+    List<RegReparacionEntity> findListByPatente(@Param("patente") String patente);
 }

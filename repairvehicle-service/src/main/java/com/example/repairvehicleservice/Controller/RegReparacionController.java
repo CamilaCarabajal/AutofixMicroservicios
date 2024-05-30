@@ -56,7 +56,7 @@ public class RegReparacionController {
         }
     }
 
-    @GetMapping("/listar")
+    @GetMapping("/lista")
     public ResponseEntity<List<RegReparacionEntity>> listarReparaciones() {
         List<RegReparacionEntity> reparaciones = regReparacionService.listarReparaciones();
 
@@ -65,6 +65,11 @@ public class RegReparacionController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("{patente}")
+    public List<RegReparacionEntity> obtenerReparacionPorPatente(@PathVariable String patente) {
+        return regReparacionService.obtenerReparacionesPatente(patente);
     }
 
 

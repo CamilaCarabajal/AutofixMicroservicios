@@ -22,7 +22,7 @@ public class ReporteUnoEntity {
     private Long id_regrepair;
     private String patente;
     private int tipo_reparacion;
-    private String tipo_vehiculo;
+    private String tipo_modelo;
     private int monto_total;
     private int reparacion_vehiculo;
     private LocalDate fecha_reporte;

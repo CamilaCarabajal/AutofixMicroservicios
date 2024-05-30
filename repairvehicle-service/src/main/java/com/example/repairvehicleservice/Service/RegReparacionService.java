@@ -214,6 +214,10 @@ public class RegReparacionService {
         return regReparacionRepository.findAll();
     }
 
+    public List<RegReparacionEntity> obtenerReparacionesPatente(String patente) {
+        return regReparacionRepository.findListByPatente(patente);
+    }
+
 
 
 }
