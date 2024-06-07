@@ -37,8 +37,8 @@ public class VehiculoController {
         vehiculoService.eliminarVehiculo(patente);
     }
 
-    @GetMapping
-    public ResponseEntity<List<VehiculoEntity>> obtenerVehiculos() {
+    @GetMapping("/lista")
+    public ResponseEntity<List<VehiculoEntity>> getVehiculos() {
         List<VehiculoEntity> vehiculos = vehiculoService.obtenerVehiculos();
         if (!vehiculos.isEmpty()) {
             return ResponseEntity.ok(vehiculos);

@@ -17,3 +17,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/reportes-service
     username: postgres
     password: 1234
+feign:
+  client:
+    config:
+      vehicle-service:
+        url: http://vehiculo-service
+      repair-service:
+        url: http://reparacion-service
+      regreparacion-service:
+        url: http://repairvehicle-service
