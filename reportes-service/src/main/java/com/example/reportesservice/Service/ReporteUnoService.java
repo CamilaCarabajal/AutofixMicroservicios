@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class ReporteUnoService {
         return responseEntity.getBody();
     }
 
-    public Map<String, Map<String, Object>> getReparacionesPorMesYAño(int mes, int año) {
+    public Map<String, Map<String, Object>> getReporte(int mes, int año) {
         if (mes < 1 || mes > 12 || año <= 0) {
             throw new IllegalArgumentException("Mes o año inválido.");
         }
@@ -90,5 +91,54 @@ public class ReporteUnoService {
         }
 
         return reporte;
+    }
+
+    public Map<String, Map<String, Object>> getComparativoReparaciones(int mes, int año) {
+        if (mes < 1 || mes > 12 || año <= 0) {
+            throw new IllegalArgumentException("Mes o año inválido.");
+        }
+
+        YearMonth currentMonth = YearMonth.of(año, mes);
+        YearMonth previousMonth1 = currentMonth.minusMonths(1);
+        YearMonth previousMonth2 = currentMonth.minusMonths(2);
+
+        Map<String, Map<String, Object>> currentMonthData = getReporte(currentMonth.getMonthValue(), currentMonth.getYear());
+        Map<String, Map<String, Object>> previousMonth1Data = getReporte(previousMonth1.getMonthValue(), previousMonth1.getYear());
+        Map<String, Map<String, Object>> previousMonth2Data = getReporte(previousMonth2.getMonthValue(), previousMonth2.getYear());
+
+        Map<String, Map<String, Object>> comparativoReporte = new HashMap<>();
+
+        // Lógica para combinar y comparar los datos de los tres meses
+        for (String tipoVehiculo : currentMonthData.keySet()) {
+            Map<String, Object> currentData = currentMonthData.get(tipoVehiculo);
+            Map<String, Object> prevData1 = previousMonth1Data.getOrDefault(tipoVehiculo, new HashMap<>());
+            Map<String, Object> prevData2 = previousMonth2Data.getOrDefault(tipoVehiculo, new HashMap<>());
+
+            Map<String, Object> comparativoData = new HashMap<>();
+
+            for (String tipoReparacion : currentData.keySet()) {
+                if (tipoReparacion.endsWith("_monto")) continue;
+
+                int currentCantidad = (Integer) currentData.getOrDefault(tipoReparacion, 0);
+                int prev1Cantidad = (Integer) prevData1.getOrDefault(tipoReparacion, 0);
+                int prev2Cantidad = (Integer) prevData2.getOrDefault(tipoReparacion, 0);
+
+                double currentMonto = (Double) currentData.getOrDefault(tipoReparacion + "_monto", 0.0);
+                double prev1Monto = (Double) prevData1.getOrDefault(tipoReparacion + "_monto", 0.0);
+                double prev2Monto = (Double) prevData2.getOrDefault(tipoReparacion + "_monto", 0.0);
+
+                comparativoData.put(tipoReparacion, currentCantidad);
+                comparativoData.put(tipoReparacion + "_prev1", prev1Cantidad);
+                comparativoData.put(tipoReparacion + "_prev2", prev2Cantidad);
+
+                comparativoData.put(tipoReparacion + "_monto", currentMonto);
+                comparativoData.put(tipoReparacion + "_monto_prev1", prev1Monto);
+                comparativoData.put(tipoReparacion + "_monto_prev2", prev2Monto);
+            }
+
+            comparativoReporte.put(tipoVehiculo, comparativoData);
+        }
+
+        return comparativoReporte;
     }
 }
