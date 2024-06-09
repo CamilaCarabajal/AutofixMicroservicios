@@ -14,9 +14,10 @@ public class ReparacionService {
     private RestTemplate restTemplate;
 
 
-    public int calculoMontoReparacion(ReparacionEntity reparacion, String motor){
+    public int calculoMontoReparacion(ReparacionEntity reparacion){
         int costoReparacion= 0;
         int tipoReparacion = reparacion.getTipo_reparacion();
+        String motor = reparacion.getTipo_motor();
 
         switch(tipoReparacion) {
             case 1:
@@ -123,11 +124,12 @@ public class ReparacionService {
 
 
     }
-    public ReparacionEntity guardarReparacion(ReparacionEntity reparacion, String motor) {
+    public ReparacionEntity guardarReparacion(ReparacionEntity reparacion) {
         ReparacionEntity nuevaReparacion = new ReparacionEntity();
         nuevaReparacion.setId_reparacion(reparacion.getId_reparacion());
         nuevaReparacion.setTipo_reparacion(reparacion.getTipo_reparacion());
-        nuevaReparacion.setMonto_reparacion(calculoMontoReparacion(reparacion,motor));
+        nuevaReparacion.setTipo_motor(reparacion.getTipo_motor());
+        nuevaReparacion.setMonto_reparacion(calculoMontoReparacion(reparacion));
         return reparacionRepository.save(nuevaReparacion);
     }
     public ReparacionEntity obtenerReparacionPorId(Long id_reparacion) {

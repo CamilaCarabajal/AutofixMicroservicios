@@ -18,7 +18,7 @@ public class VehiculoController {
     VehiculoService vehiculoService;
 
     @PostMapping
-    public VehiculoEntity crearVehiculo(@RequestBody VehiculoEntity vehiculo) {
+    public VehiculoEntity registroVehiculo(@RequestBody VehiculoEntity vehiculo) {
         return vehiculoService.crearVehiculo(vehiculo);
     }
 

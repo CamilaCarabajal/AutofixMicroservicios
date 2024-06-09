@@ -20,5 +20,6 @@ public class ReparacionEntity {
     @Column(unique = true,nullable = false)
     private Long id_reparacion;
     private int tipo_reparacion;
+    private String tipo_motor;
     private int monto_reparacion;
 }

@@ -16,8 +16,8 @@ public class ReparacionController {
     private ReparacionService reparacionService;
 
     @PostMapping("/guardar")
-    public ResponseEntity<ReparacionEntity> guardarReparacion(@RequestBody ReparacionEntity reparacion, @RequestParam String motor) {
-        ReparacionEntity nuevaReparacion = reparacionService.guardarReparacion(reparacion, motor);
+    public ResponseEntity<ReparacionEntity> guardarReparacion(@RequestBody ReparacionEntity reparacion) {
+        ReparacionEntity nuevaReparacion = reparacionService.guardarReparacion(reparacion);
         return ResponseEntity.ok(nuevaReparacion);
     }
 
