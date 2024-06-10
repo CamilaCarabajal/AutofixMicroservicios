@@ -17,7 +17,7 @@ public class VehiculoController {
     @Autowired
     VehiculoService vehiculoService;
 
-    @PostMapping
+    @PostMapping()
     public VehiculoEntity registroVehiculo(@RequestBody VehiculoEntity vehiculo) {
         return vehiculoService.crearVehiculo(vehiculo);
     }
