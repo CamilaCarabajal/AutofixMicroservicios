@@ -1,6 +1,6 @@
 import axios from 'axios'; 
 
-const VEHICULO_API_URL = "http://localhost:8080/vehiculo/";
+const VEHICULO_API_URL = "http://localhost:8080/vehiculo";
 
 class VehiculoService {
     registroVehiculo(data) {
