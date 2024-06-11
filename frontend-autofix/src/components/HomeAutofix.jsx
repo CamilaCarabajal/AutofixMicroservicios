@@ -43,8 +43,9 @@ function HomeAutofix() {
         <h1 style={styles.title}>Reparaciones Autofix</h1>
         <div style={styles.linksContainer}>
           <Link to="/guardar" style={styles.link}>Registro Vehículo</Link>
-          <Link to="/registro-reparacion" style={styles.link}>Registro Reparación</Link>
+          <Link to="/guardarreparacion" style={styles.link}>Registro Reparación</Link>
           <Link to="/lista-reparaciones" style={styles.link}>Lista de Reparaciones</Link>
+          <Link to="/lista-vehiculos" style={styles.link}>Lista Vehículos</Link> 
         </div>
       </div>
     </div>

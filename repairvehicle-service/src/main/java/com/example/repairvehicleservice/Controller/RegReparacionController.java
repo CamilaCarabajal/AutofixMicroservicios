@@ -45,6 +45,7 @@ public class RegReparacionController {
         regReparacionService.eliminarReparacion(id);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping("/vehiculo/{patente}")
     public ResponseEntity<RegReparacionEntity> crearReparacionVehiculo(@PathVariable String patente, @RequestBody RegReparacionEntity reparacion) {
         RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacionVehiculo(patente, reparacion);
@@ -67,10 +68,8 @@ public class RegReparacionController {
         }
     }
 
-    @GetMapping("{patente}")
+    @GetMapping("/{patente}")
     public List<RegReparacionEntity> obtenerReparacionPorPatente(@PathVariable String patente) {
         return regReparacionService.obtenerReparacionesPatente(patente);
     }
-
-
 }

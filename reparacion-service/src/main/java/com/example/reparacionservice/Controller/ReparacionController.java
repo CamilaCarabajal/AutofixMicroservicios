@@ -15,7 +15,7 @@ public class ReparacionController {
     @Autowired
     private ReparacionService reparacionService;
 
-    @PostMapping("/guardar")
+    @PostMapping()
     public ResponseEntity<ReparacionEntity> guardarReparacion(@RequestBody ReparacionEntity reparacion) {
         ReparacionEntity nuevaReparacion = reparacionService.guardarReparacion(reparacion);
         return ResponseEntity.ok(nuevaReparacion);

@@ -5,6 +5,7 @@ import RegistroVehiculo from './components/RegistroVehiculo';
 import RegistroReparacion from './components/RegistroReparacion';
 import VehiculoReparacion from './components/VehiculoReparacion';
 import ListaReparaciones from './components/ListaReparaciones';
+import ListaVehiculos from './components/ListaVehiculos'
 
 function App() {
   return (
@@ -13,9 +14,10 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeAutofix/>} />
           <Route path="/guardar" element={<RegistroVehiculo/>} />
-          <Route path="/registro-reparacion" component={RegistroReparacion} />
+          <Route path="/guardarreparacion" element={<RegistroReparacion/>} />
           <Route path="/vehiculo-reparacion" component={VehiculoReparacion} />
           <Route path="/lista-reparaciones" component={ListaReparaciones} />
+          <Route path="/lista-vehiculos" element={<ListaVehiculos/>} />
         </Routes>
       </BrowserRouter>
     </div>
