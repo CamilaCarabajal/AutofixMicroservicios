@@ -183,8 +183,7 @@ public class RegReparacionService {
         return regReparacionRepository.save(reparacion);
     }
 
-    public RegReparacionEntity crearReparacionVehiculo(String patente) {
-        RegReparacionEntity reparacion = new RegReparacionEntity();
+    public RegReparacionEntity crearReparacionVehiculo(String patente, RegReparacionEntity reparacion) {
         VehiculoModel vehiculo = getVehiculo(patente);
         if (vehiculo != null) {
             int monto_reparacion = calcularCostoReparacion(patente, reparacion);

@@ -15,7 +15,7 @@ function App() {
           <Route path="/" element={<HomeAutofix/>} />
           <Route path="/guardar" element={<RegistroVehiculo/>} />
           <Route path="/guardarreparacion" element={<RegistroReparacion/>} />
-          <Route path="/vehiculo-reparacion" component={VehiculoReparacion} />
+          <Route path="/vehiculo-reparacion/:patente" element={<VehiculoReparacion/>} />
           <Route path="/lista-reparaciones" component={ListaReparaciones} />
           <Route path="/lista-vehiculos" element={<ListaVehiculos/>} />
         </Routes>

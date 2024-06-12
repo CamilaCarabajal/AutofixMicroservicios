@@ -47,8 +47,8 @@ public class RegReparacionController {
     }
 
     @PostMapping("/regrepair/vehiculo/{patente}")
-    public ResponseEntity<RegReparacionEntity> crearReparacionVehiculo(@PathVariable String patente) {
-        RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacionVehiculo(patente);
+    public ResponseEntity<RegReparacionEntity> crearReparacionVehiculo(@PathVariable String patente, @RequestBody RegReparacionEntity reparacion) {
+        RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacionVehiculo(patente,reparacion);
         if (nuevaReparacion != null) {
             return ResponseEntity.ok(nuevaReparacion);
         } else {
