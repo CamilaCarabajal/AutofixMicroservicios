@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/regrepair")
+@RequestMapping("/repairvehicle")
 @RestController
 public class RegReparacionController {
     @Autowired
     RegReparacionService regReparacionService;
 
-    @PostMapping
+    @PostMapping("/regrepair")
     public ResponseEntity<RegReparacionEntity> crearReparacion(@RequestBody RegReparacionEntity reparacion) {
         RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacion(reparacion);
         return ResponseEntity.ok(nuevaReparacion);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/regrepair/{id}")
     public ResponseEntity<RegReparacionEntity> obtenerReparacionPorId(@PathVariable Long id) {
         RegReparacionEntity reparacion = regReparacionService.obtenerReparacionPorId(id);
         if (reparacion != null) {
@@ -30,7 +30,7 @@ public class RegReparacionController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/regrepair/{id}")
     public ResponseEntity<RegReparacionEntity> actualizarReparacion(@PathVariable Long id, @RequestBody RegReparacionEntity reparacion) {
         RegReparacionEntity reparacionActualizada = regReparacionService.actualizarReparacion(id, reparacion);
         if (reparacionActualizada != null) {
@@ -40,16 +40,15 @@ public class RegReparacionController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/regrepair/{id}")
     public ResponseEntity<Void> eliminarReparacion(@PathVariable Long id) {
         regReparacionService.eliminarReparacion(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/vehiculo/{patente}")
-    public ResponseEntity<RegReparacionEntity> crearReparacionVehiculo(@PathVariable String patente, @RequestBody RegReparacionEntity reparacion) {
-        RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacionVehiculo(patente, reparacion);
-
+    @PostMapping("/regrepair/vehiculo/{patente}")
+    public ResponseEntity<RegReparacionEntity> crearReparacionVehiculo(@PathVariable String patente) {
+        RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacionVehiculo(patente);
         if (nuevaReparacion != null) {
             return ResponseEntity.ok(nuevaReparacion);
         } else {
@@ -57,7 +56,7 @@ public class RegReparacionController {
         }
     }
 
-    @GetMapping("/lista")
+    @GetMapping("/regrepair/lista")
     public ResponseEntity<List<RegReparacionEntity>> listarReparaciones() {
         List<RegReparacionEntity> reparaciones = regReparacionService.listarReparaciones();
 
@@ -68,7 +67,7 @@ public class RegReparacionController {
         }
     }
 
-    @GetMapping("/{patente}")
+    @GetMapping("/regrepair/{patente}")
     public List<RegReparacionEntity> obtenerReparacionPorPatente(@PathVariable String patente) {
         return regReparacionService.obtenerReparacionesPatente(patente);
     }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -19,13 +20,18 @@ public class RegReparacionService {
     @Autowired
     private RestTemplate restTemplate;
     public VehiculoModel getVehiculo(String patente) {
-        ResponseEntity<VehiculoModel> responseEntity = restTemplate.exchange(
-                "http://vehiculo-service/vehiculo/" + patente,
-                HttpMethod.GET,
-                null,
-                VehiculoModel.class
-        );
-        return responseEntity.getBody();
+        try {
+            ResponseEntity<VehiculoModel> responseEntity = restTemplate.exchange(
+                    "http://vehiculo-service/vehiculo/" + patente,
+                    HttpMethod.GET,
+                    null,
+                    VehiculoModel.class
+            );
+            return responseEntity.getBody();
+        } catch (RestClientException e) {
+            // Maneja el error de red o respuesta no exitosa
+            return null;
+        }
     }
 /*----------------------------------Historia de Usuario 3------------------------------------------*/
     public int calcularCostoReparacion(String patente, RegReparacionEntity regRepair){
@@ -177,14 +183,15 @@ public class RegReparacionService {
         return regReparacionRepository.save(reparacion);
     }
 
-    public RegReparacionEntity crearReparacionVehiculo(String patente, RegReparacionEntity reparacion){
+    public RegReparacionEntity crearReparacionVehiculo(String patente) {
+        RegReparacionEntity reparacion = new RegReparacionEntity();
         VehiculoModel vehiculo = getVehiculo(patente);
-        if(vehiculo!=null){
-            int monto_reparacion = calcularCostoReparacion(patente,reparacion);
+        if (vehiculo != null) {
+            int monto_reparacion = calcularCostoReparacion(patente, reparacion);
             reparacion.setPatente(vehiculo.getPatente());
             reparacion.setMonto_reparacion(monto_reparacion);
             return regReparacionRepository.save(reparacion);
-        }else{
+        } else {
             return null;
         }
     }

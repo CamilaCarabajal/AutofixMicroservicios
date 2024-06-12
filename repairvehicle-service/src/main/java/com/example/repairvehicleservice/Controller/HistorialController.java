@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@RequestMapping("/repairvehicle")
 @RestController
 public class HistorialController {
 
     @Autowired
     HistorialService historialService;
-    @GetMapping("/vehiculo/{patente}")
+    @GetMapping("/historial/vehiculo/{patente}")
     public ResponseEntity<List<RegReparacionEntity>> listarReparacionesPorPatente(@PathVariable String patente) {
         List<RegReparacionEntity> reparaciones = historialService.listarReparacionesPorPatente(patente);
 
@@ -24,7 +24,7 @@ public class HistorialController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PostMapping
+    @PostMapping("/historial")
     public ResponseEntity<HistorialEntity> guardarHistorial(@RequestBody String patente) {
         HistorialEntity nuevoHistorial = historialService.guardarHistorial(patente);
         return ResponseEntity.ok(nuevoHistorial);
