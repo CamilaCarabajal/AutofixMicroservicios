@@ -3,6 +3,7 @@ package com.example.repairvehicleservice.Controller;
 import com.example.repairvehicleservice.Entity.RegReparacionEntity;
 import com.example.repairvehicleservice.Service.RegReparacionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,12 +49,26 @@ public class RegReparacionController {
 
     @PostMapping("/regrepair/vehiculo/{patente}")
     public ResponseEntity<RegReparacionEntity> crearReparacionVehiculo(@PathVariable String patente, @RequestBody RegReparacionEntity reparacion) {
-        RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacionVehiculo(patente,reparacion);
-        if (nuevaReparacion != null) {
-            return ResponseEntity.ok(nuevaReparacion);
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            RegReparacionEntity nuevaReparacion = regReparacionService.crearReparacionVehiculo(patente, reparacion);
+            if (nuevaReparacion != null) {
+                return ResponseEntity.ok(nuevaReparacion);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            // Logging the exception
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+    }
+
+    @GetMapping("/regrepair/calcular-monto")
+    public ResponseEntity<Integer> calcularMonto(@RequestParam String patente, @RequestParam int tipoReparacion) {
+        RegReparacionEntity reparacion = new RegReparacionEntity();
+        reparacion.setTipo_reparacion(tipoReparacion);
+        int monto = regReparacionService.calcularCostoReparacion(patente, reparacion);
+        return ResponseEntity.ok(monto);
     }
 
     @GetMapping("/regrepair/lista")

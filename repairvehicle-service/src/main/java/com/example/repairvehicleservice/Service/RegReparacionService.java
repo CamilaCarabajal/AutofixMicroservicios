@@ -188,6 +188,10 @@ public class RegReparacionService {
         if (vehiculo != null) {
             int monto_reparacion = calcularCostoReparacion(patente, reparacion);
             reparacion.setPatente(vehiculo.getPatente());
+            int nuevaCantidadReparaciones = vehiculo.getCantidad_reparaciones() + 1;
+            vehiculo.setCantidad_reparaciones(nuevaCantidadReparaciones);
+            String vehiculoUpdateUrl = "http://vehiculo-service" + "/vehiculo/" + patente;
+            restTemplate.put(vehiculoUpdateUrl, vehiculo);
             reparacion.setMonto_reparacion(monto_reparacion);
             return regReparacionRepository.save(reparacion);
         } else {

@@ -17,6 +17,7 @@ import java.time.LocalTime;
 public class RegReparacionEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true,nullable = false)
     private Long id_regrepair;
     private String patente;

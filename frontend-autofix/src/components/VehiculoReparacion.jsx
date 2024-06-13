@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import RepairVehicleService from '../services/RepairVehicleService';
 import NavbarComponent from './NavbarComponent';
@@ -7,25 +7,39 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const VehiculoReparacion = () => {
   const { patente } = useParams();
   const [reparacion, setReparacion] = useState({
-    id_reparacion: '',
     tipo_reparacion: '',
     fecha_reparacion: '',
     hora_reparacion: '',
-    monto_reparacion: 0
+    monto_reparacion: 0 // monto inicial de 0
   });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setReparacion({
-      ...reparacion,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setReparacion(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+
+    if (name === 'tipo_reparacion') {
+      RepairVehicleService.calcularMonto(patente, value)
+        .then(response => {
+          setReparacion(prevState => ({
+            ...prevState,
+            monto_reparacion: response.data
+          }));
+        })
+        .catch(err => {
+          console.error("Error al calcular el monto: ", err);
+        });
+    }
   };
 
   const saveReparacion = (e) => {
     e.preventDefault();
     RepairVehicleService.registroRepairVehicle(patente, reparacion)
-      .then(() => {
+      .then(response => {
+        console.log("Reparación registrada con éxito: ", response.data);
         navigate("/");
       })
       .catch(err => {
@@ -45,15 +59,13 @@ const VehiculoReparacion = () => {
             <div className="card-body">
               <form>
                 <div className="form-group">
-                  <label>ID de Reparación:</label>
+                  <label>Patente:</label>
                   <input
                     type="text"
-                    name="id_reparacion"
+                    name="patente"
                     className="form-control"
-                    placeholder="ID de la reparación"
-                    required
-                    value={reparacion.id_reparacion}
-                    onChange={handleChange}
+                    value={patente}
+                    readOnly
                   />
                 </div>
                 <br />
@@ -62,13 +74,13 @@ const VehiculoReparacion = () => {
                   <select
                     name="tipo_reparacion"
                     className="form-control"
-                    required
                     value={reparacion.tipo_reparacion}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">Seleccionar tipo de reparación</option>
-                    {[...Array(11).keys()].map(num => (
-                      <option key={num + 1} value={num + 1}>Tipo {num + 1}</option>
+                    {[...Array(11).keys()].map(i => (
+                      <option key={i + 1} value={i + 1}>Tipo {i + 1}</option>
                     ))}
                   </select>
                 </div>
@@ -101,9 +113,10 @@ const VehiculoReparacion = () => {
                   <label>Monto de Reparación:</label>
                   <input
                     type="number"
+                    name="monto_reparacion"
                     className="form-control"
                     value={reparacion.monto_reparacion}
-                    disabled
+                    readOnly
                   />
                 </div>
                 <br />
