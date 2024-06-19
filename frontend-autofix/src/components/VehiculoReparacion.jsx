@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import RepairVehicleService from '../services/RepairVehicleService';
 import NavbarComponent from './NavbarComponent';
@@ -12,6 +12,7 @@ const VehiculoReparacion = () => {
     hora_reparacion: '',
     monto_reparacion: 0 // monto inicial de 0
   });
+  const [registroExitoso, setRegistroExitoso] = useState(false); // Estado para controlar el mensaje de éxito
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -40,7 +41,10 @@ const VehiculoReparacion = () => {
     RepairVehicleService.registroRepairVehicle(patente, reparacion)
       .then(response => {
         console.log("Reparación registrada con éxito: ", response.data);
-        navigate("/");
+        setRegistroExitoso(true); // Mostrar mensaje de éxito
+        setTimeout(() => {
+          navigate("/");
+        }, 2000); // Redirigir después de 2 segundos
       })
       .catch(err => {
         console.error("Error al guardar la reparación: ", err);
@@ -57,6 +61,11 @@ const VehiculoReparacion = () => {
             <br />
             <h1 className="text-center">Registrar Reparación para {patente}</h1>
             <div className="card-body">
+              {registroExitoso && (
+                <div className="alert alert-success" role="alert">
+                  Registro exitoso
+                </div>
+              )}
               <form>
                 <div className="form-group">
                   <label>Patente:</label>

@@ -198,6 +198,15 @@ public class RegReparacionService {
             return null;
         }
     }
+
+    public List<RegReparacionEntity> getReparacionesPorPatente(String patente) {
+        return regReparacionRepository.findListByPatente(patente);
+    }
+
+    public RegReparacionEntity getPrimeraReparacionPorPatente(String patente) {
+        List<RegReparacionEntity> reparaciones = regReparacionRepository.findListByPatente(patente);
+        return reparaciones.isEmpty() ? null : reparaciones.get(0);
+    }
 /*----------------------------------------------CRUD----------------------------------------*/
     public RegReparacionEntity obtenerReparacionPorId(Long id_reparacion) {
         return regReparacionRepository.findById(id_reparacion).orElse(null);
@@ -227,6 +236,8 @@ public class RegReparacionService {
     public List<RegReparacionEntity> obtenerReparacionesPatente(String patente) {
         return regReparacionRepository.findListByPatente(patente);
     }
+
+
 
 
 

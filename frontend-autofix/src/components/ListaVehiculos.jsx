@@ -1,4 +1,3 @@
-// components/ListaVehiculos.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import vehiculoService from '../services/VehiculoService';
@@ -36,6 +35,7 @@ const ListaVehiculos = () => {
               <th>Asientos</th>
               <th>Kilometraje</th>
               <th>Acciones</th>
+              <th>Reparaciones</th>
             </tr>
           </thead>
           <tbody>
@@ -52,11 +52,14 @@ const ListaVehiculos = () => {
                   <td>
                     <Link to={`/vehiculo-reparacion/${vehiculo.patente}`}>Registrar Reparación</Link>
                   </td>
+                  <td>
+                    <Link to={`/vehiculo-reparaciones/${vehiculo.patente}`}>Ver Reparaciones</Link>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="text-center">No hay vehículos registrados.</td>
+                <td colSpan="9" className="text-center">No hay vehículos registrados.</td>
               </tr>
             )}
           </tbody>
