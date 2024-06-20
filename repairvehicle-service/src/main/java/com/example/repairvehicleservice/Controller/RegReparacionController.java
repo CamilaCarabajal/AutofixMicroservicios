@@ -93,4 +93,6 @@ public class RegReparacionController {
             return ResponseEntity.ok(reparaciones);
         }
     }
+
+
 }

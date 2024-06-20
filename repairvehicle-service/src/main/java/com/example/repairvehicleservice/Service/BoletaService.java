@@ -130,30 +130,34 @@ public class BoletaService {
         return costoTotal;
     }
 
-    public BoletaEntity generarBoleta(String patente, LocalDate fechaReparacion, LocalDate fechaCliente, LocalTime horaReparacion, LocalTime horaCliente) {
+    public BoletaEntity generarBoleta(String patente, BoletaEntity boleta,LocalDate fechaReparacion, LocalDate fechaCliente, LocalTime horaReparacion, LocalTime horaCliente) {
         VehiculoModel vehiculo = getVehiculo(patente);
+        if (vehiculo != null) {
         // Calcular los valores necesarios
-        int montoTotalReparaciones = calcularMontoTotalReparaciones(patente);
-        double montoRecargos = calcularMontoRecargos(patente, fechaReparacion, fechaCliente);
-        double montoDescuentos = calcularMontoTotalDescuento(patente);
-        double montoSubTotal = calcularMontoSubTotal(patente, fechaReparacion, fechaCliente);
-        double montoIVA = calcularMontoIVA(patente, fechaReparacion, fechaCliente);
-        double costoTotal = calcularCostoTotal(patente, fechaReparacion, fechaCliente);
+            int montoTotalReparaciones = calcularMontoTotalReparaciones(vehiculo.getPatente());
+            double montoRecargos = calcularMontoRecargos(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+            double montoDescuentos = calcularMontoTotalDescuento(vehiculo.getPatente());
+            double montoSubTotal = calcularMontoSubTotal(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+            double montoIVA = calcularMontoIVA(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+            double costoTotal = calcularCostoTotal(vehiculo.getPatente(), fechaReparacion, fechaCliente);
 
         // Crear y guardar la boleta
-        BoletaEntity boleta = new BoletaEntity();
-        boleta.setPatente(vehiculo.getPatente());
-        boleta.setMonto_total(montoTotalReparaciones);
-        boleta.setRecargo(montoRecargos);
-        boleta.setDescuento(montoDescuentos);
-        boleta.setIva(montoIVA);
-        boleta.setCosto_total(costoTotal);
-        boleta.setFecha_salida(fechaReparacion);
-        boleta.setHora_salida(horaReparacion);
-        boleta.setFecha_cliente(fechaCliente);
-        boleta.setHora_cliente(horaCliente);
+            boleta.setPatente(vehiculo.getPatente());
+            boleta.setMonto_total(montoTotalReparaciones);
+            boleta.setRecargo(montoRecargos);
+            boleta.setDescuento(montoDescuentos);
+            boleta.setIva(montoIVA);
+            boleta.setCosto_total(costoTotal);
+            boleta.setFecha_salida(fechaReparacion);
+            boleta.setHora_salida(horaReparacion);
+            boleta.setFecha_cliente(fechaCliente);
+            boleta.setHora_cliente(horaCliente);
 
-        return boletaRepository.save(boleta);
+            return boletaRepository.save(boleta);
+        }else {
+            return null;
+        }
+
     }
 
 
