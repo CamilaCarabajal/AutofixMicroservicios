@@ -14,6 +14,25 @@ class RepairVehicleService {
   getReparaciones(patente) {
     return axios.get(`${REPAIRVEHICLE_API_URL}/regrepair/lista/${patente}`);
   }
+
+  generarBoleta(patente, fechaReparacion, fechaCliente, horaReparacion, horaCliente) {
+    const params = {
+      fechaReparacion,
+      fechaCliente,
+      horaReparacion,
+      horaCliente
+    };
+
+    return axios.post(`${REPAIRVEHICLE_API_URL}/boleta/vehiculo/${patente}`, null, { params });
+  }
+
+  getBoleta(id) {
+    return axios.get(`${REPAIRVEHICLE_API_URL}/boleta/${id}`);
+  }
+  
+  deleteReparaciones(patente) {
+    return axios.delete(`${REPAIRVEHICLE_API_URL}/regrepair/vehiculo/${patente}`);
+  }
 }
 
 const repairvehicleService = new RepairVehicleService();

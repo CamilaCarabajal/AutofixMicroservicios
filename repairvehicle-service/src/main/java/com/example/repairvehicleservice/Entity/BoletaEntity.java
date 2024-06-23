@@ -17,9 +17,11 @@ import java.time.LocalTime;
 public class BoletaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true,nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "boleta_id_boleta_seq")
+    @SequenceGenerator(name = "boleta_id_boleta_seq", sequenceName = "boleta_id_boleta_seq", allocationSize = 1)
+    @Column(name = "id_boleta", unique = true, nullable = false)
     private Long id_boleta;
+
     private String patente;
     private int monto_total;
     private double descuento;

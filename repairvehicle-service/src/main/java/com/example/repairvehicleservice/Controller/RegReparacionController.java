@@ -1,6 +1,7 @@
 package com.example.repairvehicleservice.Controller;
 
 import com.example.repairvehicleservice.Entity.RegReparacionEntity;
+import com.example.repairvehicleservice.Service.BoletaService;
 import com.example.repairvehicleservice.Service.RegReparacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import java.util.List;
 public class RegReparacionController {
     @Autowired
     RegReparacionService regReparacionService;
+    @Autowired
+    BoletaService boletaService;
 
     @PostMapping("/regrepair")
     public ResponseEntity<RegReparacionEntity> crearReparacion(@RequestBody RegReparacionEntity reparacion) {
@@ -93,6 +96,13 @@ public class RegReparacionController {
             return ResponseEntity.ok(reparaciones);
         }
     }
+
+    @DeleteMapping("/regrepair/vehiculo/{patente}")
+    public ResponseEntity<Void> eliminarReparacionesPorPatente(@PathVariable String patente) {
+        regReparacionService.eliminarReparacionesPorPatente(patente);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 }

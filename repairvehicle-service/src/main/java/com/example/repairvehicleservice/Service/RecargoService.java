@@ -1,6 +1,5 @@
 package com.example.repairvehicleservice.Service;
 
-import com.example.repairvehicleservice.Entity.RecargoEntity;
 import com.example.repairvehicleservice.Entity.RegReparacionEntity;
 import com.example.repairvehicleservice.Model.VehiculoModel;
 import com.example.repairvehicleservice.Repository.RecargoRepository;
@@ -109,15 +108,6 @@ public class RecargoService {
         if (diasRetraso > 0) {
             // Calcula el recargo por retraso (5% por cada día de retraso)
             double recargo = reparacion.getMonto_reparacion() * 0.05 * diasRetraso;
-
-            // Crea un nuevo recargo en la base de datos
-            RecargoEntity nuevoRecargo = new RecargoEntity();
-            nuevoRecargo.setId_reparacion(idReparacion);
-            nuevoRecargo.setPatente(reparacion.getPatente());
-            nuevoRecargo.setMonto_total(recargo);
-
-            // Guarda el nuevo recargo en la base de datos
-            recargoRepository.save(nuevoRecargo);
 
             return recargo;
         } else {

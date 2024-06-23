@@ -77,26 +77,28 @@ public class BoletaService {
         // Obtener la lista de reparaciones por patente
         List<RegReparacionEntity> reparaciones = regReparacionService.getReparacionesPorPatente(patente);
 
-
         // Calcular el monto total de reparaciones
         double montoTotalReparaciones = calcularMontoTotalReparaciones(patente);
 
-        // Calcular el monto total de descuento sumando los descuentos de reparación, bono y por día de atención para cada reparación
-        double montoTotalDescuento = 0.0;
-        double descuentoDia = 0.0;
+        // Calcular los descuentos
         double descuentoReparacion = descuentoService.calcularDescuentoReparacion(patente);
         double descuentoBono = descuentoService.calcularDescuentoBono(patente);
 
-        for (RegReparacionEntity reparacion : reparaciones) {
+        // Acumulador para el descuento por día
+        double descuentoDiaTotal = 0.0;
 
-            // Aplicar el descuento por día de atención si corresponde
-            descuentoDia+= descuentoService.calculoDescuentoDia(reparacion.getId_regrepair());
+        // Aplicar el descuento por día de atención para cada reparación
+        for (RegReparacionEntity reparacion : reparaciones) {
+            descuentoDiaTotal += descuentoService.calculoDescuentoDia(reparacion.getId_regrepair());
         }
 
-        montoTotalDescuento =montoTotalReparaciones*(descuentoReparacion+descuentoBono)+descuentoDia;
+        // Calcular el descuento total
+        double montoDescuentoReparacionYBono = (descuentoReparacion * montoTotalReparaciones) + descuentoBono;
+        double descuentoTotal = montoDescuentoReparacionYBono + descuentoDiaTotal;
 
-        return montoTotalDescuento;
+        return descuentoTotal;
     }
+
 
     public double calcularMontoSubTotal(String patente, LocalDate fechaReparacion, LocalDate fechaCliente) {
         double sumaReparaciones = calcularMontoTotalReparaciones(patente);
@@ -130,10 +132,11 @@ public class BoletaService {
         return costoTotal;
     }
 
-    public BoletaEntity generarBoleta(String patente, BoletaEntity boleta,LocalDate fechaReparacion, LocalDate fechaCliente, LocalTime horaReparacion, LocalTime horaCliente) {
+    public BoletaEntity generarBoleta(String patente, LocalDate fechaReparacion, LocalDate fechaCliente, LocalTime horaReparacion, LocalTime horaCliente) {
+        BoletaEntity boleta= new BoletaEntity();
         VehiculoModel vehiculo = getVehiculo(patente);
         if (vehiculo != null) {
-        // Calcular los valores necesarios
+            // Calcular los valores necesarios
             int montoTotalReparaciones = calcularMontoTotalReparaciones(vehiculo.getPatente());
             double montoRecargos = calcularMontoRecargos(vehiculo.getPatente(), fechaReparacion, fechaCliente);
             double montoDescuentos = calcularMontoTotalDescuento(vehiculo.getPatente());
@@ -141,7 +144,7 @@ public class BoletaService {
             double montoIVA = calcularMontoIVA(vehiculo.getPatente(), fechaReparacion, fechaCliente);
             double costoTotal = calcularCostoTotal(vehiculo.getPatente(), fechaReparacion, fechaCliente);
 
-        // Crear y guardar la boleta
+            // Crear y guardar la boleta
             boleta.setPatente(vehiculo.getPatente());
             boleta.setMonto_total(montoTotalReparaciones);
             boleta.setRecargo(montoRecargos);
@@ -158,6 +161,18 @@ public class BoletaService {
             return null;
         }
 
+    }
+
+    public boolean eliminarBoleta(Long id) {
+        if (boletaRepository.existsById(id)) {
+            boletaRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    public BoletaEntity obtenerBoletaPorId(Long id) {
+        return boletaRepository.findById(id).orElse(null);
     }
 
 
