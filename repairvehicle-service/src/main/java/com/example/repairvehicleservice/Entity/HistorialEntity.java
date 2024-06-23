@@ -32,6 +32,7 @@ public class HistorialEntity {
     private int monto_total;
     private double monto_recargo;
     private double monto_descuento;
+    private double sub_total;
     private double monto_iva;
     private double costo_total;
     private LocalDate fecha_salida;

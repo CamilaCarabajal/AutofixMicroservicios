@@ -13,7 +13,7 @@ const VehiculoReparacion = () => {
     monto_reparacion: 0 // monto inicial de 0
   });
   const [registroExitoso, setRegistroExitoso] = useState(false); // Estado para controlar el mensaje de éxito
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook para navegación
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,8 +43,8 @@ const VehiculoReparacion = () => {
         console.log("Reparación registrada con éxito: ", response.data);
         setRegistroExitoso(true); // Mostrar mensaje de éxito
         setTimeout(() => {
-          navigate("/");
-        }, 2000); // Redirigir después de 2 segundos
+          navigate("/lista-vehiculos"); // Redirigir a ListaVehiculos después de 2 segundos
+        }, 2000);
       })
       .catch(err => {
         console.error("Error al guardar la reparación: ", err);
@@ -144,3 +144,4 @@ const VehiculoReparacion = () => {
 };
 
 export default VehiculoReparacion;
+

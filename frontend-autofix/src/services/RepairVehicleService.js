@@ -33,6 +33,10 @@ class RepairVehicleService {
   deleteReparaciones(patente) {
     return axios.delete(`${REPAIRVEHICLE_API_URL}/regrepair/vehiculo/${patente}`);
   }
+
+  getHistorial() {
+    return axios.get(`${REPAIRVEHICLE_API_URL}/historial/listaHistorial`);
+  }
 }
 
 const repairvehicleService = new RepairVehicleService();

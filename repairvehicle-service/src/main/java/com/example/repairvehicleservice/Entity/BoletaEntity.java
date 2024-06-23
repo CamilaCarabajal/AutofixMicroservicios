@@ -26,6 +26,7 @@ public class BoletaEntity {
     private int monto_total;
     private double descuento;
     private double recargo;
+    private double sub_total;
     private double iva;
     private double costo_total;
     private LocalDate fecha_salida;

@@ -13,19 +13,24 @@ public class HistorialController {
 
     @Autowired
     HistorialService historialService;
-    @PostMapping("/historial/vehiculo/{patente}")
-    public ResponseEntity<HistorialEntity> guardarHistorial(@PathVariable String patente) {
-        HistorialEntity nuevoHistorial = historialService.guardarHistorial(patente);
-        return ResponseEntity.ok(nuevoHistorial);
-    }
 
-    @GetMapping("/listaHistorial")
+    @GetMapping("/historial/listaHistorial")
     public ResponseEntity<List<HistorialEntity>> listaHistorial() {
         List<HistorialEntity> historial = historialService.listaHistorial();
 
         if (!historial.isEmpty()) {
             return ResponseEntity.ok(historial);
         } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/historial/{id}")
+    public ResponseEntity<Void> eliminarHistorial(@PathVariable Long id) {
+        try {
+            historialService.eliminarHistorial(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }

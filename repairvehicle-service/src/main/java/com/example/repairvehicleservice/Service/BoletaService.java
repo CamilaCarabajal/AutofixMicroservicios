@@ -1,6 +1,7 @@
 package com.example.repairvehicleservice.Service;
 
 import com.example.repairvehicleservice.Entity.BoletaEntity;
+import com.example.repairvehicleservice.Entity.HistorialEntity;
 import com.example.repairvehicleservice.Entity.RegReparacionEntity;
 import com.example.repairvehicleservice.Model.VehiculoModel;
 import com.example.repairvehicleservice.Repository.*;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -25,6 +27,8 @@ public class BoletaService {
     DescuentoRepository descuentoRepository;
     @Autowired
     RegReparacionRepository regReparacionRepository;
+    @Autowired
+    HistorialRepository historialRepository;
     @Autowired
     RecargoService recargoService;
     @Autowired
@@ -133,34 +137,73 @@ public class BoletaService {
     }
 
     public BoletaEntity generarBoleta(String patente, LocalDate fechaReparacion, LocalDate fechaCliente, LocalTime horaReparacion, LocalTime horaCliente) {
-        BoletaEntity boleta= new BoletaEntity();
-        VehiculoModel vehiculo = getVehiculo(patente);
-        if (vehiculo != null) {
-            // Calcular los valores necesarios
-            int montoTotalReparaciones = calcularMontoTotalReparaciones(vehiculo.getPatente());
-            double montoRecargos = calcularMontoRecargos(vehiculo.getPatente(), fechaReparacion, fechaCliente);
-            double montoDescuentos = calcularMontoTotalDescuento(vehiculo.getPatente());
-            double montoSubTotal = calcularMontoSubTotal(vehiculo.getPatente(), fechaReparacion, fechaCliente);
-            double montoIVA = calcularMontoIVA(vehiculo.getPatente(), fechaReparacion, fechaCliente);
-            double costoTotal = calcularCostoTotal(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+        try {
+            VehiculoModel vehiculo = getVehiculo(patente);
 
-            // Crear y guardar la boleta
-            boleta.setPatente(vehiculo.getPatente());
-            boleta.setMonto_total(montoTotalReparaciones);
-            boleta.setRecargo(montoRecargos);
-            boleta.setDescuento(montoDescuentos);
-            boleta.setIva(montoIVA);
-            boleta.setCosto_total(costoTotal);
-            boleta.setFecha_salida(fechaReparacion);
-            boleta.setHora_salida(horaReparacion);
-            boleta.setFecha_cliente(fechaCliente);
-            boleta.setHora_cliente(horaCliente);
+            if (vehiculo != null) {
+                // Obtener la primera reparación
+                RegReparacionEntity primeraReparacion = regReparacionService.getPrimeraReparacionPorPatente(patente);
+                if (primeraReparacion == null) {
+                    // Si no hay reparaciones, manejar adecuadamente (puede que quieras lanzar una excepción o devolver null)
+                    return null;
+                }
 
-            return boletaRepository.save(boleta);
-        }else {
+                // Calcular los valores necesarios
+                int montoTotalReparaciones = calcularMontoTotalReparaciones(vehiculo.getPatente());
+                double montoRecargos = calcularMontoRecargos(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+                double montoDescuentos = calcularMontoTotalDescuento(vehiculo.getPatente());
+                double montoSubTotal = calcularMontoSubTotal(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+                double montoIVA = calcularMontoIVA(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+                double costoTotal = calcularCostoTotal(vehiculo.getPatente(), fechaReparacion, fechaCliente);
+
+                // Crear y guardar la boleta
+                BoletaEntity boleta = new BoletaEntity();
+                boleta.setPatente(vehiculo.getPatente());
+                boleta.setMonto_total(montoTotalReparaciones);
+                boleta.setRecargo(montoRecargos);
+                boleta.setDescuento(montoDescuentos);
+                boleta.setSub_total(montoSubTotal);
+                boleta.setIva(montoIVA);
+                boleta.setCosto_total(costoTotal);
+                boleta.setFecha_salida(fechaReparacion);
+                boleta.setHora_salida(horaReparacion);
+                boleta.setFecha_cliente(fechaCliente);
+                boleta.setHora_cliente(horaCliente);
+
+                BoletaEntity savedBoleta = boletaRepository.save(boleta);
+
+                // Crear y guardar el historial
+                HistorialEntity historial = new HistorialEntity();
+                historial.setId_historial(savedBoleta.getId_boleta()); // Asumiendo que id_historial es el mismo que id_boleta
+                historial.setPatente(vehiculo.getPatente());
+                historial.setMarca(vehiculo.getMarca());
+                historial.setModelo(vehiculo.getModelo());
+                historial.setAno_fabricacion(vehiculo.getAno_fabricacion());
+                historial.setMotor(vehiculo.getMotor());
+                historial.setFecha_ingreso(primeraReparacion.getFecha_reparacion()); // Usando la fecha de la primera reparación
+                historial.setHora_ingreso(primeraReparacion.getHora_reparacion()); // Usando la hora de la primera reparación
+                historial.setMonto_total(montoTotalReparaciones);
+                historial.setMonto_recargo(montoRecargos);
+                historial.setMonto_descuento(montoDescuentos);
+                historial.setSub_total(montoSubTotal);
+                historial.setMonto_iva(montoIVA);
+                historial.setCosto_total(costoTotal);
+                historial.setFecha_salida(fechaReparacion);
+                historial.setHora_salida(horaReparacion);
+                historial.setFecha_cliente(fechaCliente);
+                historial.setHora_cliente(horaCliente);
+
+                historialRepository.save(historial);
+
+                return savedBoleta;
+            } else {
+                return null;
+            }
+        } catch (HttpClientErrorException e) {
+            // Manejar la excepción cuando el servicio de vehículos no está disponible o retorna un error
+            e.printStackTrace();
             return null;
         }
-
     }
 
     public boolean eliminarBoleta(Long id) {

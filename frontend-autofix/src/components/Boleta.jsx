@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import repairvehicleService from '../services/RepairVehicleService';
 import NavbarComponent from './NavbarComponent';
 import styled from 'styled-components';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 const BoletaContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 80vh; /* Ajustar el alto según sea necesario */
   background-color: #f8f9fa;
 `;
 
@@ -18,8 +17,8 @@ const BoletaBox = styled.div`
   border: 2px solid #000;
   padding: 20px;
   background-color: #fff;
-  width: 80%;
-  max-width: 600px;
+  width: calc(80% - 10px); /* Reducir el ancho en 10px */
+  max-width: 590px; /* Ajustar para mantener el tamaño máximo deseado */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
@@ -36,23 +35,41 @@ const Label = styled.span`
   font-weight: bold;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const Button = styled(Link)`
+  text-decoration: none;
+  background-color: #28a745;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
 const Boleta = () => {
-  const { id } = useParams(); // Obtener el parámetro id desde la URL
-  const [boleta, setBoleta] = useState(null); // Estado para almacenar los datos de la boleta
+  const { id } = useParams();
+  const [boleta, setBoleta] = useState(null);
 
   useEffect(() => {
-    // Función para obtener los detalles de la boleta al cargar el componente
     const fetchBoleta = async () => {
       try {
-        const response = await repairvehicleService.getBoleta(id); // Obtener boleta del servicio
-        setBoleta(response.data); // Actualizar el estado con los datos de la boleta obtenidos
+        const response = await repairvehicleService.getBoleta(id);
+        setBoleta(response.data);
       } catch (error) {
         console.error("Hubo un error al obtener los detalles de la boleta:", error);
       }
     };
 
-    fetchBoleta(); // Llamar a la función para obtener la boleta
-  }, [id]); // Dependencia: id, para que se actualice cuando cambie
+    fetchBoleta();
+  }, [id]);
 
   if (!boleta) {
     return <div>Cargando...</div>;
@@ -60,7 +77,7 @@ const Boleta = () => {
 
   return (
     <div>
-      <NavbarComponent /> {/* Componente de navegación */}
+      <NavbarComponent />
       <BoletaContainer>
         <BoletaBox>
           <h2 className="text-center">Detalles de la Boleta</h2>
@@ -97,6 +114,9 @@ const Boleta = () => {
           <BoletaRow>
             <Label>Hora Cliente:</Label> <span>{boleta.hora_cliente}</span>
           </BoletaRow>
+          <ButtonContainer>
+            <Button to="/">Ok</Button>
+          </ButtonContainer>
         </BoletaBox>
       </BoletaContainer>
     </div>
@@ -104,3 +124,4 @@ const Boleta = () => {
 };
 
 export default Boleta;
+
