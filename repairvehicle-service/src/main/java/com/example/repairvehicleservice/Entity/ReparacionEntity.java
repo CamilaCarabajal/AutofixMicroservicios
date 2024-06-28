@@ -1,4 +1,4 @@
-package com.example.reportesservice.Model;
+package com.example.repairvehicleservice.Entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,16 +9,17 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "regrepair")
+@Table(name = "reparacion")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class RegReparacionModel {
+public class ReparacionEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true,nullable = false)
-    private Long id_regrepair;
+    private Long id_reparacion;
     private String patente;
     private int tipo_reparacion;
     private LocalDate fecha_reparacion;

@@ -1,32 +1,26 @@
 package com.example.reportesservice.Controller;
 
+import com.example.reportesservice.Entity.ReporteUnoEntity;
 import com.example.reportesservice.Service.ReporteUnoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
+@RequestMapping("/reportes")
 @RestController
 public class ReporteUnoController {
     @Autowired
-    ReporteUnoService reporteUnoService;
+    private ReporteUnoService reporteUnoService;
 
-    @GetMapping("/reparaciones/reporteuno")
-    public ResponseEntity<Map<String, Map<String, Object>>> getReporte(
-            @RequestParam int mes,
-            @RequestParam int ano) {
-        Map<String, Map<String, Object>> reporte = reporteUnoService.getReporte(mes, ano);
-        return ResponseEntity.ok(reporte);
-    }
-
-    @GetMapping("/reparaciones/reportedos")
-    public ResponseEntity<Map<String, Map<String, Object>>> getComparativo(
-            @RequestParam int mes,
-            @RequestParam int ano) {
-        Map<String, Map<String, Object>> comparativo = reporteUnoService.getComparativoReparaciones(mes, ano);
-        return ResponseEntity.ok(comparativo);
+    @PostMapping("/calcular-costos-reparacion")
+    public ResponseEntity<List<ReporteUnoEntity>> calcularCostosReparacion(@RequestParam int mes, @RequestParam int ano) {
+        List<ReporteUnoEntity> resultados = reporteUnoService.calcularCostosReparacion(mes, ano);
+        if (!resultados.isEmpty()) {
+            return ResponseEntity.ok(resultados);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
     }
 }
