@@ -2,6 +2,7 @@ package com.example.repairvehicleservice.Controller;
 
 import com.example.repairvehicleservice.Entity.RegReparacionEntity;
 import com.example.repairvehicleservice.Entity.ResultadoEntity;
+import com.example.repairvehicleservice.Entity.ResultadosDosEntity;
 import com.example.repairvehicleservice.Service.BoletaService;
 import com.example.repairvehicleservice.Service.RegReparacionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,19 @@ public class RegReparacionController {
     @PostMapping("/regrepair/calcularCostos")
     public ResponseEntity<List<ResultadoEntity>> calcularCostos(@RequestParam int mes, @RequestParam int ano) {
         List<ResultadoEntity> resultados = regReparacionService.calcularCostosReparacion(mes, ano);
+        if (!resultados.isEmpty()) {
+            return ResponseEntity.ok(resultados);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @PostMapping("/regrepair/calcular-reparaciones")
+    public ResponseEntity<List<ResultadosDosEntity>> calcularReparacionesPorMes(
+            @RequestParam int mes, @RequestParam int ano) {
+
+        List<ResultadosDosEntity> resultados = regReparacionService.calcularReparacionesPorMes(mes, ano);
+
         if (!resultados.isEmpty()) {
             return ResponseEntity.ok(resultados);
         } else {

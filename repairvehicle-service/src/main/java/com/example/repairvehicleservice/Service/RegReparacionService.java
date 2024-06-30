@@ -3,6 +3,7 @@ package com.example.repairvehicleservice.Service;
 import com.example.repairvehicleservice.Entity.RegReparacionEntity;
 import com.example.repairvehicleservice.Entity.ReparacionEntity;
 import com.example.repairvehicleservice.Entity.ResultadoEntity;
+import com.example.repairvehicleservice.Entity.ResultadosDosEntity;
 import com.example.repairvehicleservice.Model.VehiculoModel;
 import com.example.repairvehicleservice.Repository.*;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +27,8 @@ public class RegReparacionService {
     RegReparacionRepository regReparacionRepository;
     @Autowired
     ReparacionRepository reparacionRepository;
+    @Autowired
+    ResultadosDosRepository resultadosDosRepository;
     @Autowired
     BoletaRepository boletaRepository;
     @Autowired
@@ -519,6 +523,72 @@ public class RegReparacionService {
     }
 
     /*-------------------------------------------RESULTADO REPORTE DOS ---------------------------------------*/
+    public List<ResultadosDosEntity> calcularReparacionesPorMes(int mes, int ano) {
+        List<ReparacionEntity> reparaciones = listaReparacion(); // Obtener la lista de reparaciones
+        List<ResultadosDosEntity> resultados = new ArrayList<>();
 
+        for (int i = 0; i < 3; i++) {
+            int mesActual = mes - i;
+            int anoActual = ano;
+            if (mesActual <= 0) {
+                mesActual += 12;
+                anoActual--;
+            }
+
+            for (ReparacionEntity reparacion : reparaciones) {
+                LocalDate fechaReparacion = reparacion.getFecha_reparacion();
+                if (fechaReparacion.getMonthValue() == mesActual && fechaReparacion.getYear() == anoActual) {
+                    int tipoReparacion = reparacion.getTipo_reparacion();
+                    int costoReparacion = calcularCostoReparaciones(reparacion.getPatente(), reparacion);
+
+                    ResultadosDosEntity resultadoExistente = findResultadoPorTipo(resultados, tipoReparacion, mesActual, anoActual);
+                    if (resultadoExistente != null) {
+                        resultadoExistente.setCantidad_reparaciones(resultadoExistente.getCantidad_reparaciones() + 1);
+                        resultadoExistente.setMonto_total_reparaciones(resultadoExistente.getMonto_total_reparaciones() + costoReparacion);
+                    } else {
+                        ResultadosDosEntity nuevoResultado = new ResultadosDosEntity(null, tipoReparacion, 1, costoReparacion, mesActual, anoActual, 0.0, 0.0);
+                        resultados.add(nuevoResultado);
+                    }
+                }
+            }
+        }
+
+        calcularVariaciones(resultados);
+
+        try {
+            // Guardar los resultados en la base de datos
+            resultadosDosRepository.saveAll(resultados);
+        } catch (DataAccessException e) {
+            // Manejar errores al guardar en la base de datos
+            System.err.println("Error al guardar resultados: " + e.getMessage());
+        }
+
+        return resultados;
+    }
+
+    private ResultadosDosEntity findResultadoPorTipo(List<ResultadosDosEntity> resultados, int tipoReparacion, int mes, int ano) {
+        for (ResultadosDosEntity resultado : resultados) {
+            if (resultado.getTipo_reparacion() == tipoReparacion && resultado.getMes() == mes && resultado.getAno() == ano) {
+                return resultado;
+            }
+        }
+        return null;
+    }
+
+    private void calcularVariaciones(List<ResultadosDosEntity> resultados) {
+        for (ResultadosDosEntity actual : resultados) {
+            for (ResultadosDosEntity previo : resultados) {
+                if (actual.getTipo_reparacion() == previo.getTipo_reparacion() &&
+                        actual.getMes() == previo.getMes() - 1 && actual.getAno() == previo.getAno()) {
+
+                    double variacionCantidad = ((double) (actual.getCantidad_reparaciones() - previo.getCantidad_reparaciones()) / previo.getCantidad_reparaciones()) * 100;
+                    double variacionMonto = ((double) (actual.getMonto_total_reparaciones() - previo.getMonto_total_reparaciones()) / previo.getMonto_total_reparaciones()) * 100;
+
+                    actual.setVariacion_cantidad(variacionCantidad);
+                    actual.setVariacion_monto(variacionMonto);
+                }
+            }
+        }
+    }
 
 }
