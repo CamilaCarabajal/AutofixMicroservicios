@@ -8,6 +8,9 @@ import ListaVehiculos from './components/ListaVehiculos';
 import ListRepairVehicle from './components/ListRepairVehicle';
 import Boleta from './components/Boleta';
 import Historial from './components/Historial';
+import ReporteUno from './components/ReporteUno'; // Importar el componente
+import ReporteDos from './components/ReporteDos'
+import Reportes from './components/Reportes'; // Importar el nuevo componente
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
           <Route path="/historial" element={<Historial/>} />
           <Route path="/lista-vehiculos" element={<ListaVehiculos/>} />
           <Route path="/boleta/:id" element={<Boleta />} />
+          <Route path="/reporte-uno" element={<ReporteUno />} /> 
+          <Route path="/reporte-dos" element={<ReporteDos />} /> 
+          <Route path="/reportes" element={<Reportes />} /> {/* Nueva ruta */}
         </Routes>
       </BrowserRouter>
     </div>

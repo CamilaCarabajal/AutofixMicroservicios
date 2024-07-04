@@ -69,17 +69,17 @@ const RegistroReparacion = () => {
                                         required
                                     >
                                         <option value="">Seleccionar tipo de reparación</option>
-                                        <option value="1">Tipo 1</option>
-                                        <option value="2">Tipo 2</option>
-                                        <option value="3">Tipo 3</option>
-                                        <option value="4">Tipo 4</option>
-                                        <option value="5">Tipo 5</option>
-                                        <option value="6">Tipo 6</option>
-                                        <option value="7">Tipo 7</option>
-                                        <option value="8">Tipo 8</option>
-                                        <option value="9">Tipo 9</option>
-                                        <option value="10">Tipo 10</option>
-                                        <option value="11">Tipo 11</option>
+                                        <option value="1">Reparaciones del Sistema de Frenos</option>
+                                        <option value="2">Servicio del Sistema de Refrigeración</option>
+                                        <option value="3">Reparaciones del Motor</option>
+                                        <option value="4">Reparaciones de la Transmisión</option>
+                                        <option value="5">Reparación del Sistema Eléctrico</option>
+                                        <option value="6">Reparaciones del Sistema de Escape</option>
+                                        <option value="7">Reparación de Neumáticos y Ruedas</option>
+                                        <option value="8">Reparaciones de la Suspensión y la Dirección</option>
+                                        <option value="9">Reparación del Sistema de Aire Acondicionado y Calefacción</option>
+                                        <option value="10">Reparaciones del Sistema de Combustible</option>
+                                        <option value="11">Reparación y Reemplazo del Parabrisas y Cristales</option>
                                     </select>
                                 </div>
                                 <br />
@@ -124,8 +124,10 @@ const RegistroReparacion = () => {
                     </div>
                 </div>
             </div>
+            
         </div>
     );
 };
 
 export default RegistroReparacion;
+

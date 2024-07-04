@@ -50,6 +50,36 @@ const ListRepairVehicle = () => {
     }
   };
 
+  // Función para obtener el nombre del tipo de reparación según su número
+  const getNombreTipoReparacion = (tipo) => {
+    switch (tipo) {
+      case 1:
+        return 'Reparaciones del Sistema de Frenos';
+      case 2:
+        return 'Servicio del Sistema de Refrigeración';
+      case 3:
+        return 'Reparaciones del Motor';
+      case 4:
+        return 'Reparaciones de la Transmisión';
+      case 5:
+        return 'Reparación del Sistema Eléctrico';
+      case 6:
+        return 'Reparaciones del Sistema de Escape';
+      case 7:
+        return 'Reparación de Neumáticos y Ruedas';
+      case 8:
+        return 'Reparaciones de la Suspensión y la Dirección';
+      case 9:
+        return 'Reparación del Sistema de Aire Acondicionado y Calefacción';
+      case 10:
+        return 'Reparaciones del Sistema de Combustible';
+      case 11:
+        return 'Reparación y Reemplazo del Parabrisas y Cristales';
+      default:
+        return 'Tipo de reparación desconocido';
+    }
+  };
+
   return (
     <div>
       <NavbarComponent /> {/* Componente de navegación */}
@@ -74,7 +104,7 @@ const ListRepairVehicle = () => {
                 <tr key={reparacion.id_regrepair}>
                   <td>{reparacion.id_regrepair}</td>
                   <td>{reparacion.patente}</td>
-                  <td>{reparacion.tipo_reparacion}</td>
+                  <td>{getNombreTipoReparacion(reparacion.tipo_reparacion)}</td>
                   <td>{reparacion.fecha_reparacion}</td>
                   <td>{reparacion.hora_reparacion}</td>
                   <td>{reparacion.monto_reparacion}</td>

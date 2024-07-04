@@ -128,4 +128,12 @@ public class RegReparacionController {
         }
     }
 
+    @PostMapping("/regrepair/calcularVariaciones")
+    public List<ResultadosDosEntity> calcularVariacionesEndpoint(@RequestBody List<ResultadosDosEntity> resultados) {
+        regReparacionService.calcularVariaciones(resultados); // Llama a tu función existente
+
+        // Puedes devolver los resultados actualizados si es necesario
+        return resultados;
+    }
+
 }

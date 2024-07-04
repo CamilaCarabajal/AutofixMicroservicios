@@ -46,6 +46,7 @@ function HomeAutofix() {
           <Link to="/guardarreparacion" style={styles.link}>Registro Reparación</Link>
           <Link to="/lista-vehiculos" style={styles.link}>Lista Vehículos</Link> 
           <Link to="/historial" style={styles.link}>Historial de Vehiculos</Link>
+          <Link to="/reportes" style={styles.link}>Reportes</Link> {/* Nuevo enlace */}
         </div>
       </div>
     </div>

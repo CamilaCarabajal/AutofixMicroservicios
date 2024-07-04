@@ -575,17 +575,26 @@ public class RegReparacionService {
         return null;
     }
 
-    private void calcularVariaciones(List<ResultadosDosEntity> resultados) {
+    public void calcularVariaciones(List<ResultadosDosEntity> resultados) {
         for (ResultadosDosEntity actual : resultados) {
             for (ResultadosDosEntity previo : resultados) {
-                if (actual.getTipo_reparacion() == previo.getTipo_reparacion() &&
-                        actual.getMes() == previo.getMes() - 1 && actual.getAno() == previo.getAno()) {
+                boolean esMesConsecutivo = (actual.getAno() == previo.getAno() && actual.getMes() == previo.getMes() - 1) ||
+                        (actual.getAno() == previo.getAno() - 1 && previo.getMes() == 12 && actual.getMes() == 1);
 
-                    double variacionCantidad = ((double) (actual.getCantidad_reparaciones() - previo.getCantidad_reparaciones()) / previo.getCantidad_reparaciones()) * 100;
-                    double variacionMonto = ((double) (actual.getMonto_total_reparaciones() - previo.getMonto_total_reparaciones()) / previo.getMonto_total_reparaciones()) * 100;
+                if (actual.getTipo_reparacion() == previo.getTipo_reparacion() && esMesConsecutivo) {
+                    if (previo.getCantidad_reparaciones() != 0) {
+                        double variacionCantidad = ((double) (actual.getCantidad_reparaciones() - previo.getCantidad_reparaciones()) / previo.getCantidad_reparaciones()) * 100;
+                        actual.setVariacion_cantidad(variacionCantidad);
+                    } else {
+                        actual.setVariacion_cantidad(0);
+                    }
 
-                    actual.setVariacion_cantidad(variacionCantidad);
-                    actual.setVariacion_monto(variacionMonto);
+                    if (previo.getMonto_total_reparaciones() != 0) {
+                        double variacionMonto = ((double) (actual.getMonto_total_reparaciones() - previo.getMonto_total_reparaciones()) / previo.getMonto_total_reparaciones()) * 100;
+                        actual.setVariacion_monto(variacionMonto);
+                    } else {
+                        actual.setVariacion_monto(0);
+                    }
                 }
             }
         }
