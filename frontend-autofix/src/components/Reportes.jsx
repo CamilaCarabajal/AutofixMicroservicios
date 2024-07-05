@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavbarComponent from './NavbarComponent';
 
 function Reportes() {
   const [mes, setMes] = useState('');
@@ -57,25 +58,28 @@ function Reportes() {
   };
 
   return (
-    <div style={styles.container}>
-      <form style={styles.form}>
-        <input 
-          type="number" 
-          placeholder="Mes" 
-          value={mes}
-          onChange={(e) => setMes(e.target.value)}
-          style={styles.input}
-        />
-        <input 
-          type="number" 
-          placeholder="Año" 
-          value={ano}
-          onChange={(e) => setAno(e.target.value)}
-          style={styles.input}
-        />
-      </form>
-      <button onClick={handleViewReporteUno} style={styles.button}>Ver Reporte 1</button>
-      <button onClick={handleViewReporteDos} style={styles.button}>Ver Reporte 2</button>
+    <div>
+      <NavbarComponent />
+      <div style={styles.container}>
+        <form style={styles.form}>
+          <input 
+            type="number" 
+            placeholder="Mes" 
+            value={mes}
+            onChange={(e) => setMes(e.target.value)}
+            style={styles.input}
+          />
+          <input 
+            type="number" 
+            placeholder="Año" 
+            value={ano}
+            onChange={(e) => setAno(e.target.value)}
+            style={styles.input}
+          />
+        </form>
+        <button onClick={handleViewReporteUno} style={styles.button}>Ver Reporte 1</button>
+        <button onClick={handleViewReporteDos} style={styles.button}>Ver Reporte 2</button>
+      </div>
     </div>
   );
 }

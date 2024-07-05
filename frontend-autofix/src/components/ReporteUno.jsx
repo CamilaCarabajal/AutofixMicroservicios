@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import NavbarComponent from './NavbarComponent';
 import reportesService from '../services/ReportesService';
 
 const ReporteUno = () => {
@@ -44,7 +45,6 @@ const ReporteUno = () => {
     const agregarDatosPorTipoYModelo = (resultados) => {
         let datos = {};
 
-        // Inicializar el objeto datos
         tiposReparacion.forEach((tipo, index) => {
             datos[index + 1] = {};
             modelos.forEach(modelo => {
@@ -53,7 +53,6 @@ const ReporteUno = () => {
             datos[index + 1].total = { conteo: 0, costo: 0 };
         });
 
-        // Rellenar el objeto datos con los resultados
         resultados.forEach(resultado => {
             let tipo = resultado.tipo_reparacion;
             let modelo = resultado.modelo;
@@ -71,6 +70,21 @@ const ReporteUno = () => {
 
     const datosPorTipoYModelo = agregarDatosPorTipoYModelo(resultados);
 
+    const meses = [
+        { value: '01', label: 'Enero' },
+        { value: '02', label: 'Febrero' },
+        { value: '03', label: 'Marzo' },
+        { value: '04', label: 'Abril' },
+        { value: '05', label: 'Mayo' },
+        { value: '06', label: 'Junio' },
+        { value: '07', label: 'Julio' },
+        { value: '08', label: 'Agosto' },
+        { value: '09', label: 'Septiembre' },
+        { value: '10', label: 'Octubre' },
+        { value: '11', label: 'Noviembre' },
+        { value: '12', label: 'Diciembre' }
+    ];
+
     const styles = {
         container: {
             display: 'flex',
@@ -83,7 +97,29 @@ const ReporteUno = () => {
             padding: '20px'
         },
         form: {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
             marginBottom: '20px',
+        },
+        inputContainer: {
+            margin: '0 10px',
+        },
+        select: {
+            padding: '8px',
+            fontSize: '16px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            textAlign: 'center',
+        },
+        yearInput: {
+            width: '100px', // Ancho ajustado para mostrar el año completo
+            padding: '8px',
+            fontSize: '16px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            textAlign: 'center',
         },
         table: {
             width: '80%',
@@ -93,7 +129,7 @@ const ReporteUno = () => {
             backgroundColor: '#fff',
         },
         th: {
-            backgroundColor: '#009879',
+            backgroundColor: '#333',
             color: '#ffffff',
             textAlign: 'center',
             padding: '10px',
@@ -103,12 +139,19 @@ const ReporteUno = () => {
             textAlign: 'center',
             padding: '8px',
             border: '1px solid #dddddd',
+            width: '80px', // Ancho ajustado para las celdas de conteo y costo
+        },
+        tdTipo: {
+            textAlign: 'center',
+            padding: '8px',
+            border: '1px solid #dddddd',
+            width: '180px', // Ancho ajustado para la celda de tipos de reparación
         },
         h2: {
             color: '#333',
         },
-        button: {
-            backgroundColor: '#009879',
+        buttonOk: {
+            backgroundColor: '#333', // Color del encabezado de la tabla
             color: '#ffffff',
             padding: '10px 20px',
             border: 'none',
@@ -118,66 +161,93 @@ const ReporteUno = () => {
         }
     };
 
+    const handleOkClick = () => {
+        window.location.href = '/'; // Redirigir a la página de inicio
+    };
+
     return (
-        <div style={styles.container}>
-            <h2 style={styles.h2}>Calcular Costos de Reparación</h2>
-            <form style={styles.form}>
-                <div>
-                    <label>Mes:</label>
-                    <input type="number" value={mes} onChange={(e) => setMes(e.target.value)} required />
-                </div>
-                <div>
-                    <label>Año:</label>
-                    <input type="number" value={ano} onChange={(e) => setAno(e.target.value)} required />
-                </div>
-            </form>
-
-            {error && <p>{error}</p>}
-
-            <h3 style={styles.h2}>Resultados:</h3>
-            {resultados.length > 0 ? (
-                <table style={styles.table}>
-                    <thead>
-                        <tr>
-                            <th style={styles.th} rowSpan="2">Lista de reparaciones</th>
-                            {modelos.map((modelo, index) => (
-                                <th key={index} style={styles.th} colSpan="2">{modelo}</th>
+        <div>
+            <NavbarComponent />
+            <div style={styles.container}>
+                <h2 style={styles.h2}>Calcular Costos de Reparación</h2>
+                <form style={styles.form}>
+                    <div style={styles.inputContainer}>
+                        <label>Mes:</label>
+                        <select
+                            value={mes}
+                            onChange={(e) => setMes(e.target.value)}
+                            style={styles.select}
+                            required
+                        >
+                            <option value="">Seleccione un mes</option>
+                            {meses.map((m) => (
+                                <option key={m.value} value={m.value}>{m.label}</option>
                             ))}
-                            <th style={styles.th} rowSpan="2">TOTAL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tiposReparacion.map((tipo, index) => (
-                            <React.Fragment key={index}>
-                                <tr>
-                                    <td style={styles.td} rowSpan="2">{tipo}</td>
-                                    {modelos.map((modelo, idx) => (
-                                        <React.Fragment key={idx}>
-                                            <td style={styles.td}>{datosPorTipoYModelo[index + 1][modelo].conteo}</td>
-                                            <td style={styles.td}>{datosPorTipoYModelo[index + 1][modelo].costo}</td>
-                                        </React.Fragment>
-                                    ))}
-                                    <td style={styles.td} rowSpan="2">{datosPorTipoYModelo[index + 1].total.conteo}</td>
-                                </tr>
-                                <tr>
-                                    {modelos.map((modelo, idx) => (
-                                        <React.Fragment key={idx}>
-                                            <td style={styles.td}></td>
-                                            <td style={styles.td}></td>
-                                        </React.Fragment>
-                                    ))}
-                                </tr>
-                            </React.Fragment>
-                        ))}
-                    </tbody>
-                </table>
-            ) : (
-                <p>No hay resultados para mostrar.</p>
-            )}
+                        </select>
+                    </div>
+                    <div style={styles.inputContainer}>
+                        <label>Año:</label>
+                        <input
+                            type="number"
+                            value={ano}
+                            onChange={(e) => setAno(e.target.value)}
+                            style={styles.yearInput}
+                            placeholder="Año"
+                            required
+                        />
+                    </div>
+                </form>
 
-            <Link to="/">
-                <button style={styles.button}>Ok</button>
-            </Link>
+                {error && <p>{error}</p>}
+
+                <h3 style={styles.h2}>Resultados:</h3>
+                {resultados.length > 0 ? (
+                    <table style={styles.table}>
+                        <thead>
+                            <tr>
+                                <th style={styles.th}>Tipo de Reparación</th>
+                                {modelos.map((modelo) => (
+                                    <th key={modelo} style={styles.th}>{modelo}</th>
+                                ))}
+                                <th style={styles.th}>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Object.entries(datosPorTipoYModelo).map(([tipo, datos]) => (
+                                <React.Fragment key={tipo}>
+                                    <tr>
+                                        <td style={styles.tdTipo} rowSpan="2">{tiposReparacion[tipo - 1]}</td>
+                                        {modelos.map((modelo) => (
+                                            <td key={modelo} style={styles.td}>
+                                                <div>{datos[modelo].conteo}</div>
+                                            </td>
+                                        ))}
+                                        <td style={styles.td}>
+                                            <div>{datos.total.conteo}</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        {modelos.map((modelo) => (
+                                            <td key={modelo} style={styles.td}>
+                                                <div>${datos[modelo].costo}</div>
+                                            </td>
+                                        ))}
+                                        <td style={styles.td}>
+                                            <div>${datos.total.costo}</div>
+                                        </td>
+                                    </tr>
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>No hay resultados para el mes y año seleccionados.</p>
+                )}
+
+                <div style={{ textAlign: 'center' }}>
+                    <button style={styles.buttonOk} onClick={handleOkClick}>Ok</button>
+                </div>
+            </div>
         </div>
     );
 };

@@ -42,4 +42,12 @@ public class ReparacionController {
         reparacionService.eliminarReparacion(id_reparacion);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/calcularCostoReparacion")
+    public ResponseEntity<Integer> calcularCostoReparacion(@RequestBody ReparacionEntity reparacion) {
+        int costoReparacion = reparacionService.calculoMontoReparacion(reparacion);
+        return ResponseEntity.ok(costoReparacion);
+    }
+
+
 }

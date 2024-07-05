@@ -6,6 +6,10 @@ class ReparacionService {
     registroReparacion(data) {
         return axios.post(REPARACION_API_URL, data);
     }
+
+    calcularCostoReparacion(reparacion) {
+        return axios.post(`${REPARACION_API_URL}/calcularCostoReparacion`, reparacion);
+    }
 }
 
 // Exporta una instancia de la clase VehiculoService

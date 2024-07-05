@@ -1,36 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import NavbarComponent from './NavbarComponent';
 import reportesService from '../services/ReportesService';
-import { useLocation } from 'react-router-dom';
 
 const ReporteDos = () => {
-    const [mes, setMes] = useState('');
-    const [ano, setAno] = useState('');
     const [resultados, setResultados] = useState([]);
     const [error, setError] = useState('');
-    const location = useLocation();
+    const [mesParam, setMesParam] = useState('');
+    const [anoParam, setAnoParam] = useState('');
+    const { search } = useLocation();
+    const navigate = useNavigate();
 
-    // Actualizar mes y año basado en la ubicación (URL)
+    // Obtener mes y año de la URL o establecer valores iniciales
     useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const mesParam = searchParams.get('mes');
-        const anoParam = searchParams.get('ano');
-        setMes(mesParam);
-        setAno(anoParam);
-    }, [location.search]);
-
-    // Manejar el envío del formulario para calcular reparaciones
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await reportesService.calcularReparaciones(mes, ano);
-            console.log(response.data); // Verificar datos recibidos en consola
-            setResultados(response.data);
-            setError('');
-        } catch (err) {
-            setError('Error al obtener los resultados.');
-            setResultados([]);
-        }
-    };
+        const searchParams = new URLSearchParams(search);
+        const mesInicial = searchParams.get('mes') || '1'; // Valor inicial si no hay mes en la URL
+        const anoInicial = searchParams.get('ano') || '2024'; // Valor inicial si no hay año en la URL
+        setMesParam(mesInicial);
+        setAnoParam(anoInicial);
+    }, [search]);
 
     // Función para obtener el nombre de un mes dado su número
     const getNombreMes = (mes) => {
@@ -42,6 +30,25 @@ const ReporteDos = () => {
     const calcularMesAnterior = (mes, decremento) => {
         return (mes - decremento + 12 - 1) % 12 + 1;
     };
+
+    // Función para calcular reparaciones al cargar o al cambiar mes/ano
+    useEffect(() => {
+        const calcularReparaciones = async () => {
+            try {
+                const response = await reportesService.calcularReparaciones(mesParam, anoParam);
+                console.log(response.data); // Verificar datos recibidos en consola
+                setResultados(response.data);
+                setError('');
+            } catch (err) {
+                setError('Error al obtener los resultados.');
+                setResultados([]);
+            }
+        };
+
+        if (mesParam && anoParam) {
+            calcularReparaciones();
+        }
+    }, [mesParam, anoParam]);
 
     // Estilos para la tabla y otros elementos
     const styles = {
@@ -55,9 +62,6 @@ const ReporteDos = () => {
             backgroundColor: '#f4f4f4',
             padding: '20px'
         },
-        form: {
-            marginBottom: '20px',
-        },
         table: {
             width: '80%',
             borderCollapse: 'collapse',
@@ -66,7 +70,7 @@ const ReporteDos = () => {
             backgroundColor: '#fff',
         },
         th: {
-            backgroundColor: '#009879',
+            backgroundColor: '#333', // Mismo color que el botón Ok
             color: '#ffffff',
             textAlign: 'center',
             padding: '10px',
@@ -76,9 +80,41 @@ const ReporteDos = () => {
             textAlign: 'center',
             padding: '8px',
             border: '1px solid #dddddd',
+            width: '80px', // Ajustado el ancho de las celdas
+        },
+        tdTipo: {
+            textAlign: 'center',
+            padding: '8px',
+            border: '1px solid #dddddd',
+            width: '180px', // Ajustado el ancho de la celda de tipos de reparación
         },
         h2: {
             color: '#333',
+        },
+        buttonOk: {
+            marginTop: '20px',
+            padding: '10px 20px',
+            backgroundColor: '#333', // Color del botón Ok
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+        },
+        select: {
+            margin: '10px',
+            padding: '8px',
+            fontSize: '1rem', // Tamaño de fuente ajustado
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+        },
+        label: {
+            marginRight: '10px',
+        },
+        inputAno: {
+            padding: '8px',
+            fontSize: '1rem', // Tamaño de fuente ajustado
+            borderRadius: '5px',
+            border: '1px solid #ccc',
         }
     };
 
@@ -97,77 +133,89 @@ const ReporteDos = () => {
         "Reparación y Reemplazo del Parabrisas y Cristales"
     ];
 
+    // Manejar cambio de mes y año
+    const handleMesChange = (event) => {
+        setMesParam(event.target.value);
+    };
+
+    const handleAnoChange = (event) => {
+        setAnoParam(event.target.value);
+    };
+
+    // Manejar el click en el botón "Ok"
+    const handleOkClick = () => {
+        navigate('/');
+    };
+
     return (
-        <div style={styles.container}>
-            <h2 style={styles.h2}>Calcular Reparaciones por Mes</h2>
-            <form style={styles.form} onSubmit={handleSubmit}>
+        <div>
+            <NavbarComponent />
+            <div style={styles.container}>
+                <h2 style={styles.h2}>Calcular Reparaciones por Mes</h2>
                 <div>
-                    <label>Mes:</label>
-                    <input type="number" value={mes} onChange={(e) => setMes(e.target.value)} required />
+                    <label style={styles.label}>Mes:</label>
+                    <select style={styles.select} value={mesParam} onChange={handleMesChange}>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((mes) => (
+                            <option key={mes} value={mes}>{getNombreMes(mes)}</option>
+                        ))}
+                    </select>
+                    <label style={styles.label}>Año:</label>
+                    <input type="text" style={styles.inputAno} value={anoParam} onChange={handleAnoChange} />
                 </div>
-                <div>
-                    <label>Año:</label>
-                    <input type="number" value={ano} onChange={(e) => setAno(e.target.value)} required />
-                </div>
-                <button type="submit">Calcular</button>
-            </form>
+                <h3 style={styles.h2}>Resultados:</h3>
+                {error && <p>{error}</p>}
+                {resultados.length > 0 ? (
+                    <table style={styles.table}>
+                        <thead>
+                            <tr>
+                                <th style={styles.th}>Tipo de Reparación</th>
+                                <th style={styles.th}>{getNombreMes(mesParam)}</th>
+                                <th style={styles.th}>% Variación</th>
+                                <th style={styles.th}>{getNombreMes(calcularMesAnterior(parseInt(mesParam), 1))}</th>
+                                <th style={styles.th}>% Variación</th>
+                                <th style={styles.th}>{getNombreMes(calcularMesAnterior(parseInt(mesParam), 2))}</th>
+                                <th style={styles.th}>% Variación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tiposReparacion.map((tipo, index) => {
+                                const tipoReparacionIndex = index + 1;
+                                const resultadoActual = resultados.find(r => r.tipo_reparacion === tipoReparacionIndex && r.mes === parseInt(mesParam));
+                                const resultadoMesAnterior = resultados.find(r => r.tipo_reparacion === tipoReparacionIndex && r.mes === calcularMesAnterior(parseInt(mesParam), 1));
+                                const resultadoDosMesesAnterior = resultados.find(r => r.tipo_reparacion === tipoReparacionIndex && r.mes === calcularMesAnterior(parseInt(mesParam), 2));
 
-            {error && <p>{error}</p>}
+                                return (
+                                    <React.Fragment key={index}>
+                                        <tr>
+                                            <td style={styles.tdTipo} rowSpan="2">{tipo}</td>
+                                            <td style={styles.td}>{resultadoActual ? resultadoActual.cantidad_reparaciones : 0}</td>
+                                            <td style={styles.td}>{resultadoActual ? resultadoActual.variacion_cantidad + '%' : '0%'}</td>
+                                            <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.cantidad_reparaciones : 0}</td>
+                                            <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.variacion_cantidad + '%' : '0%'}</td>
+                                            <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.cantidad_reparaciones : 0}</td>
+                                            <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.variacion_cantidad + '%' : '0%'}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style={styles.td}>{resultadoActual ? resultadoActual.monto_total_reparaciones : 0}</td>
+                                            <td style={styles.td}>{resultadoActual ? resultadoActual.variacion_monto + '%' : '0%'}</td>
+                                            <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.monto_total_reparaciones : 0}</td>
+                                            <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.variacion_monto + '%' : '0%'}</td>
+                                            <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.monto_total_reparaciones : 0}</td>
+                                            <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.variacion_monto + '%' : '0%'}</td>
+                                        </tr>
+                                    </React.Fragment>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>No hay resultados para mostrar.</p>
+                )}
 
-            <h3 style={styles.h2}>Resultados:</h3>
-            {resultados.length > 0 ? (
-                <table style={styles.table}>
-                    <thead>
-                        <tr>
-                            <th style={styles.th}>Tipo de Reparación</th>
-                            <th style={styles.th}>{getNombreMes(mes)}</th>
-                            <th style={styles.th}>% Variación</th>
-                            <th style={styles.th}>{getNombreMes(calcularMesAnterior(parseInt(mes), 1))}</th>
-                            <th style={styles.th}>% Variación</th>
-                            <th style={styles.th}>{getNombreMes(calcularMesAnterior(parseInt(mes), 2))}</th>
-                            <th style={styles.th}>% Variación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tiposReparacion.map((tipo, index) => {
-                            const tipoReparacionIndex = index + 1;
-                            const resultadoActual = resultados.find(r => r.tipo_reparacion === tipoReparacionIndex && r.mes === parseInt(mes));
-                            const resultadoMesAnterior = resultados.find(r => r.tipo_reparacion === tipoReparacionIndex && r.mes === calcularMesAnterior(parseInt(mes), 1));
-                            const resultadoDosMesesAnterior = resultados.find(r => r.tipo_reparacion === tipoReparacionIndex && r.mes === calcularMesAnterior(parseInt(mes), 2));
-
-                            console.log(`Tipo: ${tipo}, Mes: ${mes}, Resultado Actual:`, resultadoActual);
-
-                            return (
-                                <React.Fragment key={index}>
-                                    <tr>
-                                        <td style={styles.td}>{tipo}</td>
-                                        <td style={styles.td}>{resultadoActual ? resultadoActual.cantidad_reparaciones : 0}</td>
-                                        <td style={styles.td}>{resultadoActual ? resultadoActual.variacion_cantidad + '%' : '0%'}</td>
-                                        <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.cantidad_reparaciones : 0}</td>
-                                        <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.variacion_cantidad + '%' : '0%'}</td>
-                                        <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.cantidad_reparaciones : 0}</td>
-                                        <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.variacion_cantidad + '%' : '0%'}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style={styles.td}></td>
-                                        <td style={styles.td}>{resultadoActual ? resultadoActual.monto_total_reparaciones : 0}</td>
-                                        <td style={styles.td}>{resultadoActual ? resultadoActual.variacion_monto + '%' : '0%'}</td>
-                                        <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.monto_total_reparaciones : 0}</td>
-                                        <td style={styles.td}>{resultadoMesAnterior ? resultadoMesAnterior.variacion_monto + '%' : '0%'}</td>
-                                        <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.monto_total_reparaciones : 0}</td>
-                                        <td style={styles.td}>{resultadoDosMesesAnterior ? resultadoDosMesesAnterior.variacion_monto + '%' : '0%'}</td>
-                                    </tr>
-                                </React.Fragment>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            ) : (
-                <p>No hay resultados para mostrar.</p>
-            )}
+                <button style={styles.buttonOk} onClick={handleOkClick}>Ok</button>
+            </div>
         </div>
     );
 };
 
 export default ReporteDos;
-

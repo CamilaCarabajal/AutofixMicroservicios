@@ -12,8 +12,7 @@ const RegistroVehiculo = () => {
     ano_fabricacion: 0,
     motor: '',
     asientos: 0,
-    kilometraje: 0,
-    cantidad_reparaciones: 0
+    kilometraje: 0
   });
   const navigate = useNavigate();
 
@@ -26,7 +25,11 @@ const RegistroVehiculo = () => {
 
   const saveVehiculo = (e) => {
     e.preventDefault();
-    VehiculoService.registroVehiculo(vehiculo).then(() => {
+    const vehiculoToSave = {
+      ...vehiculo,
+      cantidad_reparaciones: 0 // Añadir cantidad_reparaciones como 0 al objeto de vehículo a guardar
+    };
+    VehiculoService.registroVehiculo(vehiculoToSave).then(() => {
       navigate("/");
     });
   };
@@ -148,20 +151,7 @@ const RegistroVehiculo = () => {
                   />
                 </div>
                 <br />
-                <div className="form-group">
-                  <label>Cantidad de reparaciones:</label>
-                  <input
-                    type="number"
-                    name="cantidad_reparaciones"
-                    className="form-control"
-                    placeholder="Cantidad de reparaciones del vehículo"
-                    required
-                    value={vehiculo.cantidad_reparaciones}
-                    onChange={handleChange}
-                    disabled // Para deshabilitar el campo
-                  />
-                </div>
-                <br />
+                {/* El campo cantidad_reparaciones no se muestra */}
                 <div className="box-footer">
                   <button className="btn btn-success" onClick={saveVehiculo}>
                     Guardar vehículo

@@ -6,7 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const RegistroReparacion = () => {
     const [reparacion, setReparacion] = useState({
-        id_reparacion: '',
         tipo_reparacion: '',
         tipo_motor: '',
         monto_reparacion: 0 // Este campo será calculado en el backend
@@ -14,11 +13,29 @@ const RegistroReparacion = () => {
     const [successMessage, setSuccessMessage] = useState(''); // Estado para el mensaje de éxito
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
+        const { name, value } = e.target;
         setReparacion({
             ...reparacion,
-            [e.target.name]: e.target.value,
+            [name]: value,
         });
+
+        if (name === 'tipo_reparacion' && value !== '') {
+            // Llamar al servicio para calcular el costo de reparación
+            try {
+                const response = await ReparacionService.calcularCostoReparacion({
+                    tipo_reparacion: value,
+                    tipo_motor: reparacion.tipo_motor,
+                });
+                setReparacion({
+                    ...reparacion,
+                    monto_reparacion: response.data,
+                    tipo_reparacion: value, // Mantener el tipo de reparación seleccionado
+                });
+            } catch (error) {
+                console.error('Error al calcular el costo de reparación: ', error);
+            }
+        }
     };
 
     const saveReparacion = (e) => {
@@ -46,18 +63,7 @@ const RegistroReparacion = () => {
                         <div className="card-body">
                             {successMessage && <div className="alert alert-success">{successMessage}</div>}
                             <form>
-                                <div className="form-group">
-                                    <label>ID Reparación:</label>
-                                    <input
-                                        type="text"
-                                        name="id_reparacion"
-                                        className="form-control"
-                                        placeholder="ID de la reparación"
-                                        required
-                                        value={reparacion.id_reparacion}
-                                        onChange={handleChange}
-                                    />
-                                </div>
+                                {/* ID Reparación no se muestra ya que será generado automáticamente */}
                                 <br />
                                 <div className="form-group">
                                     <label>Tipo de Reparación:</label>
@@ -130,4 +136,3 @@ const RegistroReparacion = () => {
 };
 
 export default RegistroReparacion;
-

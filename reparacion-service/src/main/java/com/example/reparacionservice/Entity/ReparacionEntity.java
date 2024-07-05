@@ -14,8 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReparacionEntity {
     @Id
-    @Column(unique = true,nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Generación automática del ID
+    @Column(unique = true, nullable = false)
     private Long id_reparacion;
+
     private int tipo_reparacion;
     private String tipo_motor;
     private int monto_reparacion;
