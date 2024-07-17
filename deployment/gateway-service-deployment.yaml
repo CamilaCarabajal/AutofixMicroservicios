@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: camilacarabajal/gateway-service
+          image: camilacarabajal/gateway-service  # Asegúrate de que esta imagen esté disponible públicamente o en tu registro privado
           ports:
             - containerPort: 8080
 ---
@@ -27,10 +27,11 @@ metadata:
   labels:
     app: gateway-service
 spec:
+  type: NodePort
   selector:
     app: gateway-service
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-  type: LoadBalancer
+      nodePort: 31002  # Puerto NodePort que deseas asignar (puedes elegir cualquier puerto dentro del rango permitido)
