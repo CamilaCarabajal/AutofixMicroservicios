@@ -19,6 +19,16 @@ spec:
           image: camilacarabajal/eureka-service
           ports:
             - containerPort: 8761
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: eureka-config
+            items:
+              - key: bootstrap.yaml
+                path: bootstrap.yaml
 ---
 apiVersion: v1
 kind: Service
