@@ -15,7 +15,7 @@ spec:
         app: config-service-deployment
     spec:
       containers:
-        - name: config-service-deployment
+        - name: config-service
           image: camilacarabajal/config-server
           ports:
             - containerPort: 8081
@@ -23,9 +23,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: config-service-deployment
+  name: config-service-service
   labels:
-    app: config-service-deployment
+    app: config-service-service
 spec:
   selector:
     app: config-service-deployment
