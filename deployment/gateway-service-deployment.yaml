@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gateway-service
-          image: algernonholmes/gateway-service
+          image: camilacarabajal/gateway-service
           ports:
             - containerPort: 8080
 ---
